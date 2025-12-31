@@ -1,8 +1,11 @@
 package com.tms.services.NotificationService;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class EmailTemplates {
 
-    public static String getEmailCredential(String fullName, String email, String password) {
+    public static String getEmailCredentialTemplate(String fullName, String email, String password) {
         return """
             Bonjour %s,
 
@@ -20,7 +23,7 @@ public class EmailTemplates {
     }
 
 
-    public static String getDeliveryConfirmationCode(String clientName, String deliveryCode) {
+    public static String getDeliveryConfirmationCodeTemplate(String clientName, String deliveryCode) {
         return """
             Bonjour %s,
 

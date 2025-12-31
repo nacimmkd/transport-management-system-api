@@ -13,7 +13,7 @@ public class testService {
     private final EmailNotificationService emailNotificationService;
 
     public void sendEmail() {
-        var template = EmailTemplates.getEmailCredential("Nadjib" , "nassimmakdi2001@gmail.com","123");
+        var template = EmailTemplates.getEmailCredentialTemplate("Nadjib" , "nassimmakdi2001@gmail.com","123");
         emailNotificationService.sendEmail("nassimmakdi2001@gmail.com","Email de Test", template);
     }
 

@@ -1,10 +1,13 @@
 package com.tms.services.NotificationService;
 
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 @Service
 @RequiredArgsConstructor
@@ -12,18 +15,30 @@ import org.springframework.stereotype.Service;
 public class EmailNotificationService implements INotificationService{
 
     private final JavaMailSender mailSender;
+    private final TemplateEngine templateEngine;
 
     @Override
     public void sendEmail(String to, String subject, String content) {
+
+        Context context = new Context();
+        context.setVariable("content", content);
+
+        String htmlBody = templateEngine.process("mail/email", context);
+
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(to);
-            message.setSubject(subject);
-            message.setText(content);
-            mailSender.send(message);
-            log.info("E-mail envoyé avec succès à : {}", to);
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper =
+                    new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(htmlBody, true);
+
+            mailSender.send(mimeMessage);
+            log.info("Email envoyé à {}", to);
+
         } catch (Exception e) {
-            log.error("Erreur lors de l'envoi du mail à {} : {}", to, e.getMessage());
+            log.error("Erreur email {} : {}", to, e.getMessage());
         }
     }
 }
