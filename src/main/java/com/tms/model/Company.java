@@ -2,6 +2,7 @@ package com.tms.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class Company {
     @Column(updatable = false) @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(length = 9, unique = true)
+    @Column(length = 9, unique = true, columnDefinition = "char(9)") @JdbcTypeCode(java.sql.Types.CHAR)
     private String siren;
     private String address;
     private String email;
