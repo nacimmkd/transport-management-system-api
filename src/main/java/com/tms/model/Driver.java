@@ -36,8 +36,4 @@ public class Driver {
 
     @OneToOne @JoinColumn(name = "user_id")
     private User user;
-
-    @OneToMany(mappedBy = "driver" , cascade = { CascadeType.PERSIST, CascadeType.MERGE})
-    @Builder.Default
-    private List<Delivery> deliveries = new ArrayList<>();
 }

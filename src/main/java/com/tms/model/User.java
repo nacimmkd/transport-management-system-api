@@ -31,7 +31,4 @@ public class User {
     @ManyToOne @JoinColumn(name = "company_id")
     private Company company;
 
-    @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private Driver driver;
-
 }

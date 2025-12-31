@@ -42,8 +42,4 @@ public class Vehicle {
     @ManyToOne @JoinColumn(name = "company_id")
     private Company company;
 
-    @OneToMany(mappedBy = "vehicle" , cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @Builder.Default
-    private List<Delivery> deliveries = new ArrayList<>();
-
 }
