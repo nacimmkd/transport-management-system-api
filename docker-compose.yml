@@ -1,0 +1,29 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: tms-postgres
+    environment:
+      POSTGRES_DB: tms_db
+      POSTGRES_USER: tms_user
+      POSTGRES_PASSWORD: tms_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    image: tms-backend
+    container_name: tms-backend
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/tms_db
+      SPRING_DATASOURCE_USERNAME: tms_user
+      SPRING_DATASOURCE_PASSWORD: tms_password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    restart: always
+
+volumes:
+  postgres_data:
