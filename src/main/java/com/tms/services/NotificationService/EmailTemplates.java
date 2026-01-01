@@ -1,8 +1,5 @@
 package com.tms.services.NotificationService;
 
-import org.springframework.stereotype.Service;
-
-@Service
 public class EmailTemplates {
 
     public static String getEmailCredentialTemplate(String fullName, String email, String password) {

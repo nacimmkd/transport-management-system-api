@@ -35,10 +35,11 @@ public class EmailNotificationService implements INotificationService{
             helper.setText(htmlBody, true);
 
             mailSender.send(mimeMessage);
-            log.info("Email envoyé à {}", to);
+            log.info("Email successfully sent to {}", to);
 
         } catch (Exception e) {
-            log.error("Erreur email {} : {}", to, e.getMessage());
+            log.error("Failed to send email to {} : {}", to, e.getMessage());
+            throw new EmailSendingException("Failed to send email to " + to, e);
         }
     }
 }
