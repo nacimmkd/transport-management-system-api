@@ -1,4 +1,4 @@
-package com.tms.services.NotificationService;
+package com.tms.services.notificationService;
 
 public class EmailTemplates {
 

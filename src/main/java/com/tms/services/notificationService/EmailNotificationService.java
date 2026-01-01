@@ -1,4 +1,4 @@
-package com.tms.services.NotificationService;
+package com.tms.services.notificationService;
 
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
