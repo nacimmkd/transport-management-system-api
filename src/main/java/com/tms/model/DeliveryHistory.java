@@ -1,5 +1,7 @@
 package com.tms.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tms.model.enums.DeliveryStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,6 +27,7 @@ public class DeliveryHistory {
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     @ManyToOne @JoinColumn(name = "delivery_id")
+    @JsonBackReference
     private Delivery delivery;
 
 }

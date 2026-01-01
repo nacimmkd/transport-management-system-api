@@ -1,5 +1,7 @@
 package com.tms.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.tms.model.enums.DeliveryStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -49,19 +51,24 @@ public class Delivery {
     private LocalDateTime deliveredAt = null;
 
     @ManyToOne @JoinColumn(name = "client_id")
+    @JsonManagedReference
     private Client client;
 
     @ManyToOne @JoinColumn(name = "vehicle_id")
+    @JsonManagedReference
     private Vehicle vehicle;
 
     @ManyToOne @JoinColumn(name = "driver_id")
+    @JsonManagedReference
     private Driver driver;
 
     @ManyToOne @JoinColumn(name = "company_id")
+    @JsonManagedReference
     private Company company;
 
     @OneToMany(mappedBy = "delivery", cascade = {CascadeType.PERSIST, CascadeType.MERGE , CascadeType.REFRESH})
     @Builder.Default
+    @JsonManagedReference
     private List<DeliveryHistory> deliveryHistory = new ArrayList<>();
 
 
