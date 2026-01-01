@@ -11,7 +11,10 @@ public class EmailTemplates {
             Voici vos identifiants de connexion :
             Email : %s
             Mot de passe : %s
-
+            
+            Veuillez vous connecter via le lien suivant :
+            https://www.google.com
+       
             Nous vous recommandons de changer votre mot de passe après votre première connexion.
 
             Cordialement,
