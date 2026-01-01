@@ -40,6 +40,9 @@ public class Delivery {
 
     private BigDecimal price;
 
+    @Column(name = "weight_kg")
+    private BigDecimal weightKg;
+
     @Enumerated(EnumType.STRING) @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Builder.Default
     private DeliveryStatus status = DeliveryStatus.PENDING;
@@ -50,25 +53,20 @@ public class Delivery {
     @Column(name = "delivered_at") @Builder.Default
     private LocalDateTime deliveredAt = null;
 
-    @ManyToOne @JoinColumn(name = "client_id")
-    @JsonManagedReference
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "client_id")
     private Client client;
 
-    @ManyToOne @JoinColumn(name = "vehicle_id")
-    @JsonManagedReference
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "vehicle_id")
     private Vehicle vehicle;
 
-    @ManyToOne @JoinColumn(name = "driver_id")
-    @JsonManagedReference
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "driver_id")
     private Driver driver;
 
-    @ManyToOne @JoinColumn(name = "company_id")
-    @JsonManagedReference
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "company_id")
     private Company company;
 
-    @OneToMany(mappedBy = "delivery", cascade = {CascadeType.PERSIST, CascadeType.MERGE , CascadeType.REFRESH})
+    @OneToMany(mappedBy = "delivery", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE , CascadeType.REFRESH})
     @Builder.Default
-    @JsonManagedReference
     private List<DeliveryHistory> deliveryHistory = new ArrayList<>();
 
 

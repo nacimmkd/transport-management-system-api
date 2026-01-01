@@ -20,6 +20,7 @@ public class User {
     private String username;
     private String email;
     private String password;
+    private String phone;
 
     @Enumerated(EnumType.STRING)
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
