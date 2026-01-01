@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Bienvenue sur TMS</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f8;
+            font-family: Arial, sans-serif;
+        }
+
+        table.wrapper-table {
+            width: 100%;
+        }
+
+        table.container {
+            width: 600px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .header-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #3498db;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .content pre {
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            color: #333;
+            white-space: pre-wrap;
+            padding: 0 20px 20px 20px;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .btn-wrapper {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #3498db;
+            color: #ffffff !important;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .footer {
+            font-size: 12px;
+            color: #999;
+            padding: 15px 20px;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media screen and (max-width: 620px) {
+            table.container {
+                width: 90% !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<table class="wrapper-table">
+    <tr>
+        <td align="center" style="padding:30px">
+
+            <table class="container">
+
+                <!-- Barre bleue -->
+                <tr>
+                    <td class="header-bar"></td>
+                </tr>
+
+                <!-- Titre -->
+                <tr>
+                    <td class="header-title">
+                        TMS
+                    </td>
+                </tr>
+
+                <!-- Contenu dynamique -->
+                <tr>
+                    <td class="content">
+                        <pre th:utext="${content}"></pre>
+                    </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                    <td class="footer">
+                        © 2025 TMS - Tous droits réservés
+                    </td>
+                </tr>
+
+            </table>
+
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>
