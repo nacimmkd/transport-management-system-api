@@ -2,7 +2,6 @@ package com.tms.delivery.deliveryState;
 
 import com.tms.delivery.Delivery;
 import com.tms.delivery.deliveryState.states.*;
-import com.tms.services.deliveryService.deliveryState.states.*;
 
 public class DeliveryStateFactory {
 

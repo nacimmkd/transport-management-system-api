@@ -1,20 +1,27 @@
 package com.tms.vehicule;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
+public interface VehicleRepository extends JpaRepository<Vehicle, UUID>, JpaSpecificationExecutor<Vehicle> {
 
-    Optional<Vehicle> findByIsActiveTrueAndId(UUID id);
-    Optional<Vehicle> findByPlateNumber(String plateNumber);
-    List<Vehicle> findByIsActiveTrue();
-    List<Vehicle> findByIsActiveTrueAndCapacityKgGreaterThan(BigDecimal capacityKg);
+    @Query("SELECT v FROM Vehicle v WHERE v.id=:id AND v.isActive=true AND v.company.id=:companyId")
+    Optional<Vehicle> findVehicleById(@Param("id") UUID uuid, @Param("companyId") UUID companyId);
+
+    @Query("SELECT v FROM Vehicle v WHERE v.isActive = true AND v.company.id = :companyId")
+    List<Vehicle> findAllVehicles(@Param("companyId") UUID companyId);
+
+    @Query("SELECT v FROM Vehicle v WHERE v.plateNumber=:plateNumber AND v.isActive=true AND v.company.id=:companyId")
+    Optional<Vehicle> findByPlateNumber(@Param("plateNumber") String plateNumber, @Param("companyId") UUID companyId);
+
 }

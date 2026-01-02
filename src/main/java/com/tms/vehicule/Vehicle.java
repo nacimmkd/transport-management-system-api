@@ -7,6 +7,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 
@@ -36,8 +37,11 @@ public class Vehicle {
     @Builder.Default
     private VehicleStatus vehicleStatus = VehicleStatus.AVAILABLE;
 
-    @Column
+    @Column(name = "is_active")
     private boolean isActive;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     @ManyToOne @JoinColumn(name = "company_id")
     private Company company;

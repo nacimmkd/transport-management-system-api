@@ -22,10 +22,12 @@ public class ClientController {
         return clientService.findAllClients();
     }
 
+
     @GetMapping("/{id}")
     public ClientDto findById(@PathVariable UUID id) {
         return clientService.findClientById(id);
     }
+
 
     @PostMapping
     public ResponseEntity<ClientDto> registerClient(
