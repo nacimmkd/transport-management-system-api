@@ -36,6 +36,9 @@ public class Vehicle {
     @Builder.Default
     private VehicleStatus vehicleStatus = VehicleStatus.AVAILABLE;
 
+    @Column
+    private boolean isActive;
+
     @ManyToOne @JoinColumn(name = "company_id")
     private Company company;
 

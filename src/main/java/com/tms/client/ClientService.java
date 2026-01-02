@@ -31,7 +31,7 @@ public class ClientService {
         // IMPORTANT: a modifier par la suite
         var company = companyRepository.findById(UUID.fromString("aed2f7aa-5eca-4df1-8881-87a5754350c2")).orElse(null);
 
-        var client = clientRepository.findByEmail(clientRequest.email());
+        var client = clientRepository.findByEmail(clientRequest.email()).orElse(null);
         if(client == null) {
             var newClient = ClientMapper.toEntity(clientRequest, company);
             clientRepository.save(newClient);
