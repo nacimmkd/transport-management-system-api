@@ -23,6 +23,7 @@ public class ClientMapper {
                 .email(request.email())
                 .phone(request.phone())
                 .address(request.address())
+                .isActive(true)
                 .company(company)
                 .build();
     }

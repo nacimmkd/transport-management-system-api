@@ -19,6 +19,8 @@ public class Client {
     private String email;
     private String address;
 
-    @ManyToOne @JoinColumn(name = "company_id")
+    private boolean isActive;
+
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "company_id")
     private Company company;
 }
