@@ -1,11 +1,7 @@
 package com.tms;
 
-import com.tms.services.deliveryService.DeliveryService;
-import com.tms.services.notificationService.EmailNotificationService;
-import com.tms.services.notificationService.EmailTemplates;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
 
 
 @SpringBootApplication
