@@ -1,6 +1,6 @@
 package com.tms.user;
 
-public record UserRequest(
+public record UserRegisterRequest(
         String username,
         String email,
         String password,

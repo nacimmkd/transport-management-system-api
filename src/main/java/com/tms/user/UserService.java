@@ -47,7 +47,7 @@ public class UserService {
 
 
     @Transactional
-    public UserDto registerUser(UserRequest userRequest) {
+    public UserDto registerUser(UserRegisterRequest userRequest) {
         var company = companyRepository.findById(companyId)
                 .orElseThrow(CompanyNotFoundException::new);
 
@@ -58,7 +58,6 @@ public class UserService {
             newUser.setEmail(userRequest.email().toLowerCase());
             return UserMapper.toDto(userRepository.save(newUser));
         }
-
     }
 
     @Transactional
@@ -72,7 +71,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDto updateUser(UUID id, UserRequest userRequest) {
+    public UserDto updateUser(UUID id, UserRegisterRequest userRequest) {
 
         // Verify if user exists
         var user = userRepository.findById(id)

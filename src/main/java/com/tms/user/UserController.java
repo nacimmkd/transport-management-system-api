@@ -2,13 +2,11 @@ package com.tms.user;
 
 import com.tms.common.ErrorDto;
 import lombok.RequiredArgsConstructor;
-import org.flywaydb.core.api.callback.Error;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.lang.reflect.Executable;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,7 +40,7 @@ public class UserController {
 
 
     @PostMapping
-    public ResponseEntity<UserDto> registerUser(@RequestBody UserRequest userRequest, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<UserDto> registerUser(@RequestBody UserRegisterRequest userRequest, UriComponentsBuilder uriBuilder) {
         var createdUser = userService.registerUser(userRequest);
         var uri = uriBuilder.path("/users/{id}").buildAndExpand(createdUser.id()).toUri();
         return ResponseEntity.created(uri).body(createdUser);
@@ -51,7 +49,7 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(
             @PathVariable UUID id,
-            @RequestBody UserRequest userRequest) {
+            @RequestBody UserRegisterRequest userRequest) {
         return ResponseEntity.ok(userService.updateUser(id, userRequest));
     }
 

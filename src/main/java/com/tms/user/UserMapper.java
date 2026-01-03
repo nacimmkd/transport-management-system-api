@@ -14,7 +14,7 @@ public class UserMapper {
                 .build();
     }
 
-    public static User toEntity(UserRequest userRequest, Company company) {
+    public static User toEntity(UserRegisterRequest userRequest, Company company) {
         return User.builder()
                 .username(userRequest.username())
                 .email(userRequest.email().toLowerCase())
