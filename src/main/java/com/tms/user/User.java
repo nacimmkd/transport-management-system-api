@@ -45,4 +45,11 @@ public class User {
     @ManyToOne @JoinColumn(name = "company_id")
     private Company company;
 
+
+    // METHODS
+    public void activateUser(){
+        this.isActive = true;
+        this.deletedAt = null;
+    }
+
 }

@@ -20,7 +20,9 @@ public class UserMapper {
                 .email(userRequest.email().toLowerCase())
                 .password(userRequest.password())
                 .phone(userRequest.phone())
-                .role(userRequest.role())
+                .role(UserRole.valueOf(userRequest.role().name()))
+                .isActive(true)
+                .deletedAt(null)
                 .company(company)
                 .build();
     }

@@ -59,9 +59,15 @@ public class ClientService {
                 .filter(c -> c.getCompany().getId().equals(companyId))
                 .orElseThrow(ClientNotFoundException::new);
 
-        var clientWithSameEmail = clientRepository.findByEmail(clientRequest.email(),companyId).orElse(null);
-        if(clientWithSameEmail != null) throw new ClientExistsException();
+        // Verify if another client has the same email
+        clientRepository.findByEmail(clientRequest.email().toLowerCase(), companyId)
+                .ifPresent(existing -> {
+                    if (!existing.getId().equals(id)) {
+                        throw new ClientExistsException();
+                    }
+                });
 
+        // update
         client.setName(clientRequest.name());
         client.setAddress(clientRequest.address());
         client.setPhone(clientRequest.phone());

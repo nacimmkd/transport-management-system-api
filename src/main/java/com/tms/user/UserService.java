@@ -51,18 +51,15 @@ public class UserService {
         var company = companyRepository.findById(companyId)
                 .orElseThrow(CompanyNotFoundException::new);
 
-        return userRepository.findByEmail(userRequest.email().toLowerCase(), companyId)
-                .map(existing -> updateUser(existing.getId(), userRequest))
-                .orElseGet(() -> {
-                    var newUser = UserMapper.toEntity(userRequest, company);
-                    newUser.setActive(true);
-                    newUser.setDeletedAt(null);
-                    newUser.setEmail(userRequest.email().toLowerCase());
-                    return UserMapper.toDto(userRepository.save(newUser));
-                });
-    }
+        var existingUser = userRepository.findByEmail(userRequest.email().toLowerCase(), companyId);
+        if (existingUser.isPresent()) throw new UserAlreadyExistsException();
+        else {
+            var newUser = UserMapper.toEntity(userRequest, company);
+            newUser.setEmail(userRequest.email().toLowerCase());
+            return UserMapper.toDto(userRepository.save(newUser));
+        }
 
-    // register normalUser
+    }
 
     @Transactional
     public void deleteUser(UUID id) {
@@ -76,7 +73,8 @@ public class UserService {
 
     @Transactional
     public UserDto updateUser(UUID id, UserRequest userRequest) {
-        // Verify if users exists, if exists we will reactivate it
+
+        // Verify if user exists
         var user = userRepository.findById(id)
                 .filter(u -> u.getCompany().getId().equals(companyId))
                 .orElseThrow(UserNotFoundException::new);
@@ -93,13 +91,12 @@ public class UserService {
         user.setUsername(userRequest.username());
         user.setEmail(userRequest.email().toLowerCase());
         user.setPassword(userRequest.password());
-        user.setRole(userRequest.role());
+        user.setRole(UserRole.valueOf(userRequest.role().name()));
         user.setPhone(userRequest.phone());
-
-        // 4. Reactivation
         user.setActive(true);
         user.setDeletedAt(null);
 
         return UserMapper.toDto(userRepository.save(user));
     }
+
 }

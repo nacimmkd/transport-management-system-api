@@ -54,9 +54,15 @@ public class VehicleService {
                 .filter(existing -> existing.getCompany().getId().equals(companyId))
                 .orElseThrow(VehicleNotFoundException::new);
 
-        var vehicleWithSamePlateNumber =  vehicleRepository.findByPlateNumber(vehicleRequest.plateNumber(),companyId).orElse(null);
-        if (vehicleWithSamePlateNumber != null) throw new VehicleExistsException();
+        // Verify if another vehicle has the same plate number
+        vehicleRepository.findByPlateNumber(vehicleRequest.plateNumber(), companyId)
+                .ifPresent(existing -> {
+                    if (!existing.getId().equals(id)) {
+                        throw new VehicleExistsException();
+                    }
+                });
 
+        // update
         vehicle.setBrand(vehicleRequest.brand());
         vehicle.setModel(vehicleRequest.model());
         vehicle.setPlateNumber(vehicleRequest.plateNumber());
