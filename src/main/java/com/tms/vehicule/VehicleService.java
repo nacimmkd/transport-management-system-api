@@ -3,6 +3,7 @@ package com.tms.vehicule;
 import com.tms.company.CompanyNotFoundException;
 import com.tms.company.CompanyRepository;
 import com.tms.user.UserAlreadyExistsException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,7 @@ public class VehicleService {
                  .toList();
     }
 
-
+    @Transactional
     public VehicleDto registerVehicle(VehicleRequest vehicleRequest) {
         var company = companyRepository.findById(companyId).orElseThrow(CompanyNotFoundException::new);
 
@@ -50,6 +51,7 @@ public class VehicleService {
         }
     }
 
+    @Transactional
     public VehicleDto updateVehicle(UUID id, VehicleRequest vehicleRequest) {
 
         // Verify if vehicle exists
@@ -76,12 +78,14 @@ public class VehicleService {
         return VehicleMapper.toDto(vehicleRepository.save(vehicle));
     }
 
+    @Transactional
     public VehicleDto updateVehicleStatus(UUID id, UpdateStatusRequest request) {
         var  vehicle = vehicleRepository.findActiveVehicleById(id,companyId).orElseThrow(VehicleNotFoundException::new);
         vehicle.setVehicleStatus(request.status());
         return VehicleMapper.toDto(vehicleRepository.save(vehicle));
     }
 
+    @Transactional
     public void deleteVehicle(UUID id) {
         var vehicle = vehicleRepository.findActiveVehicleById(id,companyId).orElseThrow(VehicleNotFoundException::new);
         vehicle.setActive(false);
