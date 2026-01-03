@@ -2,6 +2,7 @@ package com.tms.client;
 
 import com.tms.company.CompanyNotFoundException;
 import com.tms.company.CompanyRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -36,17 +37,25 @@ public class ClientService {
                 .toList();
     }
 
+    @Transactional
     public ClientDto registerClient(ClientRequest clientRequest) {
 
-        var company = companyRepository.findById(companyId).orElseThrow(CompanyNotFoundException::new);
-        return clientRepository.findByEmail(clientRequest.email(),companyId)
-                .map(existing -> updateClient(existing.getId(), clientRequest))
-                .orElseGet(() -> {
-                    var newClient = ClientMapper.toEntity(clientRequest, company);
-                    return ClientMapper.toDto(clientRepository.save(newClient));
-                });
+        var company = companyRepository.findById(companyId)
+                .orElseThrow(CompanyNotFoundException::new);
+
+        String email = clientRequest.email().toLowerCase();
+        var existingClient = clientRepository.findByEmail(email, companyId);
+
+        if (existingClient.isPresent()) {
+            throw new ClientExistsException();
+        } else {
+            var newClient = ClientMapper.toEntity(clientRequest, company);
+            newClient.setEmail(email);
+            return ClientMapper.toDto(clientRepository.save(newClient));
+        }
     }
 
+    @Transactional
     public void deleteClient(UUID id) {
         var client = clientRepository.findActiveClientById(id,companyId).orElseThrow(ClientNotFoundException::new);
         client.setActive(false);
@@ -54,7 +63,10 @@ public class ClientService {
         clientRepository.save(client);
     }
 
+    @Transactional
     public ClientDto updateClient(UUID id, ClientRequest clientRequest) {
+
+        // Verify if client exists
         var client = clientRepository.findById(id)
                 .filter(c -> c.getCompany().getId().equals(companyId))
                 .orElseThrow(ClientNotFoundException::new);
@@ -72,7 +84,6 @@ public class ClientService {
         client.setAddress(clientRequest.address());
         client.setPhone(clientRequest.phone());
         client.setEmail(clientRequest.email());
-
         client.setActive(true);
         client.setDeletedAt(null);
         return ClientMapper.toDto(clientRepository.save(client));
