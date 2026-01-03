@@ -21,8 +21,6 @@ public class UserMapper {
                 .password(userRequest.password())
                 .phone(userRequest.phone())
                 .role(UserRole.valueOf(userRequest.role().name()))
-                .isActive(true)
-                .deletedAt(null)
                 .company(company)
                 .build();
     }
