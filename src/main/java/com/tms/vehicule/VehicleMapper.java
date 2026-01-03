@@ -10,7 +10,7 @@ public class VehicleMapper {
                 .brand(vehicle.getBrand())
                 .model(vehicle.getModel())
                 .type(vehicle.getVehicleType())
-                .plateNumber(vehicle.getPlateNumber())
+                .plateNumber(vehicle.getPlateNumber().toUpperCase())
                 .status(vehicle.getVehicleStatus())
                 .capacityKg(vehicle.getCapacityKg())
                 .build();
@@ -21,7 +21,7 @@ public class VehicleMapper {
                 .brand(request.brand())
                 .model(request.model())
                 .vehicleType(request.type())
-                .plateNumber(request.plateNumber())
+                .plateNumber(request.plateNumber().toUpperCase())
                 .capacityKg(request.capacityKg())
                 .vehicleStatus(VehicleStatus.AVAILABLE)
                 .isActive(true)

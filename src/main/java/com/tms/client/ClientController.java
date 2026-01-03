@@ -28,6 +28,10 @@ public class ClientController {
         return clientService.findClientById(id);
     }
 
+    @PostMapping("/search")
+    public List<ClientDto> searchClients(@RequestBody ClientSearchCriteria search) {
+        return clientService.searchClients(search);
+    }
 
     @PostMapping
     public ResponseEntity<ClientDto> registerClient(
@@ -55,7 +59,7 @@ public class ClientController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDto(e.getMessage()));
     }
 
-    @ExceptionHandler(ClientDeletedException.class)
+    @ExceptionHandler(ClientExistsException.class)
     public ResponseEntity<ErrorDto> handleClientDeletedException(Exception e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDto(e.getMessage()));
     }

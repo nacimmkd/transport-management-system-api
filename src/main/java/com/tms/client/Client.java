@@ -3,6 +3,8 @@ package com.tms.client;
 import com.tms.company.Company;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -20,7 +22,11 @@ public class Client {
     private String email;
     private String address;
 
+    @Column(name = "is_active")
     private boolean isActive;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "company_id")
     private Company company;
