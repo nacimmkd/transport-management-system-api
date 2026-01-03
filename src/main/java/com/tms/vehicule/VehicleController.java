@@ -1,7 +1,9 @@
 package com.tms.vehicule;
 
 import com.tms.client.ClientRequest;
+import com.tms.common.ErrorDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -64,5 +66,15 @@ public class VehicleController {
     public ResponseEntity<Void> deleteVehicle(@PathVariable UUID id) {
         vehicleService.deleteVehicle(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @ExceptionHandler(VehicleNotFoundException.class)
+    public ResponseEntity<ErrorDto> handleVehicleNotFoundException(VehicleNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDto(e.getMessage()));
+    }
+
+    @ExceptionHandler(VehicleExistsException.class)
+    public ResponseEntity<ErrorDto> handleVehicleExistsException(VehicleExistsException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorDto(e.getMessage()));
     }
 }

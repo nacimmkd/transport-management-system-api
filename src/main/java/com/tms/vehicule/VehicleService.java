@@ -21,12 +21,12 @@ public class VehicleService {
 
 
     public VehicleDto findById(UUID id) {
-        var vehicle = vehicleRepository.findVehicleById(id,companyId).orElseThrow(VehicleNotFoundException::new);
+        var vehicle = vehicleRepository.findActiveVehicleById(id,companyId).orElseThrow(VehicleNotFoundException::new);
         return VehicleMapper.toDto(vehicle);
     }
 
     public List<VehicleDto> findAll() {
-        return vehicleRepository.findAllVehicles(companyId).stream()
+        return vehicleRepository.findAllActiveVehicles(companyId).stream()
                 .map(VehicleMapper::toDto)
                 .toList();
     }
@@ -41,37 +41,42 @@ public class VehicleService {
 
     public VehicleDto registerVehicle(VehicleRequest vehicleRequest) {
         var company = companyRepository.findById(companyId).orElseThrow(CompanyNotFoundException::new);
+        return vehicleRepository.findByPlateNumber(vehicleRequest.plateNumber(),companyId)
+                .map(existing -> updateVehicle(existing.getId(), vehicleRequest))
+                .orElseGet(() -> {
+                    var newVehicle = VehicleMapper.toEntity(vehicleRequest,company);
+                    return VehicleMapper.toDto(vehicleRepository.save(newVehicle));
+                });
 
-        var vehicle = vehicleRepository.findByPlateNumber(vehicleRequest.plateNumber(),companyId).orElse(null);
-        if (vehicle == null) {
-            var newVehicle = VehicleMapper.toEntity(vehicleRequest, company);
-            vehicleRepository.save(newVehicle);
-            return VehicleMapper.toDto(newVehicle);
-        } else {
-            return updateVehicle(vehicle.getId(), vehicleRequest);
-        }
     }
 
     public VehicleDto updateVehicle(UUID id, VehicleRequest vehicleRequest) {
-        var vehicle = vehicleRepository.findVehicleById(id,companyId).orElseThrow(VehicleNotFoundException::new);
+        var vehicle = vehicleRepository.findById(id)
+                .filter(existing -> existing.getCompany().getId().equals(companyId))
+                .orElseThrow(VehicleNotFoundException::new);
+
+        var vehicleWithSamePlateNumber =  vehicleRepository.findByPlateNumber(vehicleRequest.plateNumber(),companyId).orElse(null);
+        if (vehicleWithSamePlateNumber != null) throw new VehicleExistsException();
+
         vehicle.setBrand(vehicleRequest.brand());
         vehicle.setModel(vehicleRequest.model());
         vehicle.setPlateNumber(vehicleRequest.plateNumber());
         vehicle.setVehicleType(vehicleRequest.type());
         vehicle.setCapacityKg(vehicleRequest.capacityKg());
+
         vehicle.setDeletedAt(null);
         vehicle.setActive(true);
         return VehicleMapper.toDto(vehicleRepository.save(vehicle));
     }
 
     public VehicleDto updateVehicleStatus(UUID id, UpdateStatusRequest request) {
-        var  vehicle = vehicleRepository.findVehicleById(id,companyId).orElseThrow(VehicleNotFoundException::new);
+        var  vehicle = vehicleRepository.findActiveVehicleById(id,companyId).orElseThrow(VehicleNotFoundException::new);
         vehicle.setVehicleStatus(request.status());
         return VehicleMapper.toDto(vehicleRepository.save(vehicle));
     }
 
     public void deleteVehicle(UUID id) {
-        var vehicle = vehicleRepository.findVehicleById(id,companyId).orElseThrow(VehicleNotFoundException::new);
+        var vehicle = vehicleRepository.findActiveVehicleById(id,companyId).orElseThrow(VehicleNotFoundException::new);
         vehicle.setActive(false);
         vehicle.setDeletedAt(LocalDateTime.now());
         vehicleRepository.save(vehicle);

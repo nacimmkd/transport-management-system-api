@@ -61,7 +61,7 @@ public class ClientController {
 
     @ExceptionHandler(ClientExistsException.class)
     public ResponseEntity<ErrorDto> handleClientDeletedException(Exception e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDto(e.getMessage()));
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorDto(e.getMessage()));
     }
 
 }

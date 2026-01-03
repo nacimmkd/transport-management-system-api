@@ -40,12 +40,9 @@ public class ClientService {
 
         var company = companyRepository.findById(companyId).orElseThrow(CompanyNotFoundException::new);
         return clientRepository.findByEmail(clientRequest.email(),companyId)
-                .map(existing -> {
-                    return updateClient(existing.getId(), clientRequest);
-                })
+                .map(existing -> updateClient(existing.getId(), clientRequest))
                 .orElseGet(() -> {
                     var newClient = ClientMapper.toEntity(clientRequest, company);
-                    newClient.setActive(true);
                     return ClientMapper.toDto(clientRepository.save(newClient));
                 });
     }
