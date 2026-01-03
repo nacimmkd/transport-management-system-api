@@ -1,5 +1,6 @@
 package com.tms.driver;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.tms.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,6 +33,7 @@ public class Driver {
     @Column(name = "license_expiry_date")
     private LocalDateTime licenseExpiryDate;
 
-    @OneToOne @JoinColumn(name = "user_id")
+    @OneToOne(fetch = FetchType.LAZY) @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 }

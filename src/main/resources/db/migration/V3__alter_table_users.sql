@@ -1,0 +1,13 @@
+CREATE TYPE userrole AS ENUM ('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_DRIVER');
+
+ALTER TABLE users
+ALTER COLUMN role TYPE VARCHAR(255);
+
+DROP TYPE IF EXISTS user_role;
+
+ALTER TABLE users
+ALTER COLUMN role TYPE "userrole" USING role::"userrole";
+
+
+
+

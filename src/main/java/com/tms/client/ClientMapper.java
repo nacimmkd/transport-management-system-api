@@ -8,7 +8,7 @@ public class ClientMapper {
         return ClientDto.builder()
                 .id(client.getId())
                 .name(client.getName())
-                .email(client.getEmail())
+                .email(client.getEmail().toLowerCase())
                 .phone(client.getPhone())
                 .address(client.getAddress())
                 .build();
@@ -17,7 +17,7 @@ public class ClientMapper {
     public static Client toEntity(ClientRequest request, Company company) {
         return Client.builder()
                 .name(request.name())
-                .email(request.email())
+                .email(request.email().toLowerCase())
                 .phone(request.phone())
                 .address(request.address())
                 .isActive(true)
