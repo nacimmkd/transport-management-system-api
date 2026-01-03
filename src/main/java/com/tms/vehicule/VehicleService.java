@@ -2,6 +2,7 @@ package com.tms.vehicule;
 
 import com.tms.company.CompanyNotFoundException;
 import com.tms.company.CompanyRepository;
+import com.tms.user.UserAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -40,16 +41,18 @@ public class VehicleService {
 
     public VehicleDto registerVehicle(VehicleRequest vehicleRequest) {
         var company = companyRepository.findById(companyId).orElseThrow(CompanyNotFoundException::new);
-        return vehicleRepository.findByPlateNumber(vehicleRequest.plateNumber(),companyId)
-                .map(existing -> updateVehicle(existing.getId(), vehicleRequest))
-                .orElseGet(() -> {
-                    var newVehicle = VehicleMapper.toEntity(vehicleRequest,company);
-                    return VehicleMapper.toDto(vehicleRepository.save(newVehicle));
-                });
 
+        var existingVehicle = vehicleRepository.findByPlateNumber(vehicleRequest.plateNumber().toUpperCase(), companyId);
+        if(existingVehicle.isPresent()) throw new UserAlreadyExistsException();
+        else {
+            var newVehicle = VehicleMapper.toEntity(vehicleRequest,company);
+            return VehicleMapper.toDto(vehicleRepository.save(newVehicle));
+        }
     }
 
     public VehicleDto updateVehicle(UUID id, VehicleRequest vehicleRequest) {
+
+        // Verify if vehicle exists
         var vehicle = vehicleRepository.findById(id)
                 .filter(existing -> existing.getCompany().getId().equals(companyId))
                 .orElseThrow(VehicleNotFoundException::new);
@@ -68,7 +71,6 @@ public class VehicleService {
         vehicle.setPlateNumber(vehicleRequest.plateNumber());
         vehicle.setVehicleType(vehicleRequest.type());
         vehicle.setCapacityKg(vehicleRequest.capacityKg());
-
         vehicle.setDeletedAt(null);
         vehicle.setActive(true);
         return VehicleMapper.toDto(vehicleRepository.save(vehicle));

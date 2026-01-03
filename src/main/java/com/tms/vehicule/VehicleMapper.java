@@ -24,7 +24,6 @@ public class VehicleMapper {
                 .plateNumber(request.plateNumber().toUpperCase())
                 .capacityKg(request.capacityKg())
                 .vehicleStatus(VehicleStatus.AVAILABLE)
-                .isActive(true)
                 .company(company)
                 .build();
     }
