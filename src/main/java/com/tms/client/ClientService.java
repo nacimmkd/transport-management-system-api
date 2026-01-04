@@ -46,14 +46,13 @@ public class ClientService {
         String email = clientRequest.email().toLowerCase();
         var existingClient = clientRepository.findByEmail(email, companyId);
 
-        if (existingClient.isPresent()) {
-            throw new ClientExistsException();
-        } else {
-            var newClient = ClientMapper.toEntity(clientRequest, company);
-            newClient.setEmail(email);
-            newClient.setDeleted(false);
-            return ClientMapper.toDto(clientRepository.save(newClient));
-        }
+        if (existingClient.isPresent()) throw new ClientExistsException();
+
+        var newClient = ClientMapper.toEntity(clientRequest, company);
+        newClient.setEmail(email);
+        newClient.setDeleted(false);
+        return ClientMapper.toDto(clientRepository.save(newClient));
+
     }
 
     @Transactional
@@ -85,8 +84,6 @@ public class ClientService {
         client.setAddress(clientRequest.address());
         client.setPhone(clientRequest.phone());
         client.setEmail(clientRequest.email());
-        client.setDeleted(false);
-        client.setDeletedAt(null);
         return ClientMapper.toDto(clientRepository.save(client));
     }
 
