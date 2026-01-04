@@ -1,6 +1,6 @@
 package com.tms.delivery;
 
-import com.tms.driver.Driver;
+import com.tms.employees.driverProfile.DriverProfile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +21,7 @@ public class DeliveryService {
         return deliveryRepository.findById(id).orElseThrow(DeliveryNotFoundException::new);
     }
 
-    public List<Delivery> getDeliveriesByDriver(Driver driver) {
+    public List<Delivery> getDeliveriesByDriver(DriverProfile driver) {
         return deliveryRepository.getDeliveriesByDriver(driver);
     }
 

@@ -1,7 +1,7 @@
 package com.tms.delivery;
 
 import com.tms.client.ClientDto;
-import com.tms.driver.DriverDto;
+import com.tms.employees.driverProfile.DriverProfileDto;
 import com.tms.vehicule.VehicleDto;
 import lombok.Builder;
 
@@ -24,6 +24,6 @@ public record DeliveryDetailedDto(
         BigDecimal price,
         ClientDto client,
         VehicleDto vehicle,
-        DriverDto driver,
+        DriverProfileDto driver,
         List<DeliveryHistory> history)
 {}

@@ -1,4 +1,4 @@
-package com.tms.driver;
+package com.tms.employees.driverProfile;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.tms.employees.Employee;
@@ -18,7 +18,7 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "driver_profile")
-public class Driver {
+public class DriverProfile {
 
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -28,12 +28,12 @@ public class Driver {
 
     @Enumerated(EnumType.STRING) @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "license_category")
-    private DriverLicenseType licenseCategory;
+    private LicenseType licenseCategory;
 
     @Column(name = "license_expiry_date")
     private LocalDateTime licenseExpiryDate;
 
-    @OneToOne(fetch = FetchType.LAZY) @JoinColumn(name = "employee_id")
+    @OneToOne @JoinColumn(name = "employee_id")
     @JsonBackReference
     private Employee employee;
 }

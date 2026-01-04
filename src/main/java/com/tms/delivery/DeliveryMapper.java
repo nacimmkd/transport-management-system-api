@@ -1,7 +1,7 @@
 package com.tms.delivery;
 
 import com.tms.client.ClientMapper;
-import com.tms.driver.DriverMapper;
+import com.tms.employees.driverProfile.DriverProfileMapper;
 import com.tms.vehicule.VehicleMapper;
 
 public class DeliveryMapper {
@@ -32,7 +32,7 @@ public class DeliveryMapper {
                 .price(delivery.getPrice())
                 .client(ClientMapper.toDto(delivery.getClient()))
                 .vehicle(VehicleMapper.toDto(delivery.getVehicle()))
-                .driver(DriverMapper.toDto(delivery.getDriver()))
+                .driver(DriverProfileMapper.toDto(delivery.getDriver()))
                 .history(delivery.getDeliveryHistory())
                 .build();
     }

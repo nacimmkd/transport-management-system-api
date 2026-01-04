@@ -1,6 +1,6 @@
 package com.tms.delivery;
 
-import com.tms.driver.Driver;
+import com.tms.employees.driverProfile.DriverProfile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,5 +13,5 @@ import java.util.UUID;
 public interface DeliveryRepository extends JpaRepository<Delivery, UUID> {
 
     @Query("SELECT d FROM Delivery d WHERE d.driver = :driver")
-    List<Delivery> getDeliveriesByDriver(@Param("driver") Driver driver);
+    List<Delivery> getDeliveriesByDriver(@Param("driver") DriverProfile driver);
 }

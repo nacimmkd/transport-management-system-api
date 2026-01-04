@@ -1,7 +1,7 @@
 package com.tms.delivery;
 
 import com.tms.client.Client;
-import com.tms.driver.Driver;
+import com.tms.employees.driverProfile.DriverProfile;
 import com.tms.company.Company;
 import com.tms.vehicule.Vehicle;
 import jakarta.persistence.*;
@@ -61,7 +61,7 @@ public class Delivery {
     private Vehicle vehicle;
 
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "driver_id")
-    private Driver driver;
+    private DriverProfile driver;
 
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "company_id")
     private Company company;

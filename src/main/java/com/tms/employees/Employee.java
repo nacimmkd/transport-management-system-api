@@ -3,7 +3,7 @@ package com.tms.employees;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.tms.company.Company;
-import com.tms.driver.Driver;
+import com.tms.employees.driverProfile.DriverProfile;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -29,7 +29,7 @@ public class Employee {
 
     @Enumerated(EnumType.STRING)
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-    @Column(name = "role", columnDefinition = "user_role")
+    @Column(name = "role", columnDefinition = "employeerole")
     private EmployeeRole role;
 
     @Column(name = "deleted")
@@ -38,12 +38,15 @@ public class Employee {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    @OneToOne(mappedBy = "employee")
+    @OneToOne(mappedBy = "employee", cascade = CascadeType.PERSIST)
     @JsonManagedReference
-    private Driver driverProfile;
+    private DriverProfile driverProfile;
 
     @ManyToOne @JoinColumn(name = "company_id")
     private Company company;
 
-
+    public void addDriverProfile(DriverProfile driverProfile) {
+        this.driverProfile = driverProfile;
+        driverProfile.setEmployee(this);
+    }
 }

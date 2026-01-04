@@ -22,9 +22,6 @@ public class Company {
 
     private String name;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
     @Column(length = 9, unique = true, columnDefinition = "char(9)") @JdbcTypeCode(java.sql.Types.CHAR)
     private String siren;
     private String address;
@@ -36,5 +33,8 @@ public class Company {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
 }

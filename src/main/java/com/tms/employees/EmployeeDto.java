@@ -1,5 +1,6 @@
 package com.tms.employees;
 
+import com.tms.employees.driverProfile.DriverProfileDto;
 import lombok.Builder;
 
 import java.util.UUID;
@@ -10,6 +11,7 @@ public record EmployeeDto(
         String username,
         String email,
         String phone,
-        EmployeeRole role
+        EmployeeRole role,
+        DriverProfileDto driverProfile
 ) {
 }

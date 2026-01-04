@@ -1,7 +1,11 @@
 package com.tms.employees;
 
+import com.tms.common.CodeGeneratorUtil;
 import com.tms.company.CompanyNotFoundException;
 import com.tms.company.CompanyRepository;
+import com.tms.employees.driverProfile.*;
+import com.tms.notification.EmailNotificationService;
+import com.tms.notification.EmailTemplates;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,32 +18,33 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class EmployeeService {
 
-    private final EmployeeRepository userRepository;
+    private final EmployeeRepository employeeRepository;
     private final CompanyRepository companyRepository;
+    private final EmailNotificationService notificationService;
     private final UUID companyId = UUID.fromString("aed2f7aa-5eca-4df1-8881-87a5754350c2");
 
     public List<EmployeeDto> findAllEmployees() {
-        return userRepository.findAllActiveUsers(companyId)
+        return employeeRepository.findAllActiveUsers(companyId)
                 .stream()
                 .map(EmployeeMapper::toDto)
                 .toList();
     }
 
     public EmployeeDto findEmployeeById(UUID id) {
-        var user = userRepository.findActiveUserById(id, companyId)
+        var user = employeeRepository.findActiveUserById(id, companyId)
                 .orElseThrow(EmployeeNotFoundException::new);
         return EmployeeMapper.toDto(user);
     }
 
     public List<EmployeeDto> findAllManagers() {
-        return userRepository.findAllActiveUsersByRole(EmployeeRole.ROLE_MANAGER,companyId)
+        return employeeRepository.findAllActiveUsersByRole(EmployeeRole.ROLE_MANAGER,companyId)
                 .stream()
                 .map(EmployeeMapper::toDto)
                 .toList();
     }
 
     public List<EmployeeDto> findAllDrivers() {
-        return userRepository.findAllActiveUsersByRole(EmployeeRole.ROLE_DRIVER,companyId)
+        return employeeRepository.findAllActiveUsersByRole(EmployeeRole.ROLE_DRIVER,companyId)
                 .stream()
                 .map(EmployeeMapper::toDto)
                 .toList();
@@ -47,55 +52,112 @@ public class EmployeeService {
 
 
     @Transactional
-    public EmployeeDto registerEmployee(EmployeeRegisterRequest userRequest) {
+    public EmployeeDto registerEmployee(EmployeeRegisterRequest employeeRequest) {
         var company = companyRepository.findById(companyId)
                 .orElseThrow(CompanyNotFoundException::new);
 
-        var existingUser = userRepository.findByEmail(userRequest.email().toLowerCase(), companyId);
-        if (existingUser.isPresent()) throw new EmployeeAlreadyExistsException();
-        else {
-            var newUser = EmployeeMapper.toEntity(userRequest, company);
-            newUser.setEmail(userRequest.email().toLowerCase());
-            return EmployeeMapper.toDto(userRepository.save(newUser));
+        var exists = employeeRepository.existsByEmailAndCompanyId(employeeRequest.email().toLowerCase(),companyId);
+        if (exists) throw new EmployeeAlreadyExistsException();
+
+        var newEmployee = EmployeeMapper.toEntity(employeeRequest, company);
+
+        // if role is DRIVER, we save driverProfile
+        var role = employeeRequest.role();
+        if(role.equals(EmployeeAllowedRoles.ROLE_DRIVER)) {
+            if(employeeRequest.driverProfile() == null) throw new DriverProfileException("Le profil de chauffeur est obligatoire pour le rôle ROLE_DRIVER");
+            var profile = DriverProfileMapper.toEntity(employeeRequest.driverProfile());
+            newEmployee.addDriverProfile(profile);
         }
+
+        // Save
+        var password = CodeGeneratorUtil.generatePassword();
+        newEmployee.setPassword(password);
+        newEmployee.setEmail(employeeRequest.email().toLowerCase());
+        var savedUser = employeeRepository.save(newEmployee);
+
+        // Send email with login credentials
+        var name = newEmployee.getUsername();
+        var email =  newEmployee.getEmail();
+        sendLoginCredentials(email, name, password);
+
+        return EmployeeMapper.toDto(savedUser);
     }
+
 
     @Transactional
     public void deleteEmployee(UUID id) {
-        var user = userRepository.findActiveUserById(id, companyId)
+        var user = employeeRepository.findActiveUserById(id, companyId)
                 .orElseThrow(EmployeeNotFoundException::new);
 
         user.setDeleted(true);
         user.setDeletedAt(LocalDateTime.now());
-        userRepository.save(user);
+        employeeRepository.save(user);
     }
 
     @Transactional
-    public EmployeeDto updateEmployee(UUID id, EmployeeRegisterRequest userRequest) {
+    public EmployeeDto updateEmployee(UUID id, EmployeeUpdateRequest userRequest) {
 
         // Verify if user exists
-        var user = userRepository.findById(id)
+        var user = employeeRepository.findById(id)
                 .filter(u -> u.getCompany().getId().equals(companyId))
                 .orElseThrow(EmployeeNotFoundException::new);
 
         // Verify if someone else has the same email
-        userRepository.findByEmail(userRequest.email().toLowerCase(), companyId)
+        employeeRepository.findByEmail(userRequest.email().toLowerCase(), companyId)
                 .ifPresent(existing -> {
                     if (!existing.getId().equals(id)) {
                         throw new EmployeeAlreadyExistsException();
                     }
                 });
 
+
         // update
         user.setUsername(userRequest.username());
         user.setEmail(userRequest.email().toLowerCase());
         user.setPassword(userRequest.password());
-        user.setRole(EmployeeRole.valueOf(userRequest.role().name()));
         user.setPhone(userRequest.phone());
         user.setDeleted(false);
         user.setDeletedAt(null);
 
-        return EmployeeMapper.toDto(userRepository.save(user));
+        return EmployeeMapper.toDto(employeeRepository.save(user));
     }
 
+    // ONLY BY ADMIN
+    @Transactional
+    public EmployeeDto updateDriverProfile(UUID employeeId, EmployeeUpdateRequest request) {
+
+        var employee = employeeRepository.findActiveUserById(employeeId, companyId)
+                .orElseThrow(EmployeeNotFoundException::new);
+
+        // Verify if it is a Driver
+        if (employee.getRole() != EmployeeRole.ROLE_DRIVER) {
+            throw new DriverProfileException("Cet employé n'est pas un chauffeur.");
+        }
+
+        // Update
+        var profile = employee.getDriverProfile();
+        profile.setLicenseNumber(request.driverProfile().licenseNumber());
+        profile.setLicenseNumber(request.driverProfile().licenseNumber());
+        profile.setLicenseCategory(request.driverProfile().licenseCategory());
+        profile.setLicenseExpiryDate(request.driverProfile().licenseExpiryDate());
+
+        // Save
+        employee.setDriverProfile(profile);
+        return EmployeeMapper.toDto(employeeRepository.save(employee));
+    }
+
+
+    public void resendCredentialsEmail(UUID id) {
+        var employee = employeeRepository.findActiveUserById(id, companyId).orElseThrow(EmployeeNotFoundException::new);
+        var name = employee.getUsername();
+        var email = employee.getEmail();
+        var password = employee.getPassword();
+        sendLoginCredentials(email, name, password);
+    }
+
+
+    private void sendLoginCredentials(String to, String name, String password) {
+        var template = EmailTemplates.getEmailCredentialTemplate(name,to,password);
+        notificationService.sendEmail(to,"TMS - Login Credentials", template);
+    }
 }

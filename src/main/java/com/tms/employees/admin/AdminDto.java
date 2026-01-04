@@ -1,16 +1,14 @@
-package com.tms.driver;
+package com.tms.employees.admin;
 
+import com.tms.employees.EmployeeRole;
 import lombok.Builder;
-
 import java.util.UUID;
 
 @Builder
-public record DriverDto(
+public record AdminDto(
         UUID id,
         String username,
         String email,
         String phone,
-        String licenseNumber,
-        DriverLicenseType licenseCategory
-) {
-}
+        EmployeeRole role
+) {}
