@@ -19,11 +19,12 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
     @Query("SELECT u FROM Employee u LEFT JOIN FETCH u.driverProfile WHERE u.isDeleted = false AND u.company.id = :companyId AND u.role != com.tms.employees.EmployeeRole.ROLE_ADMIN")
     List<Employee> findAllActiveUsers(@Param("companyId") UUID companyId);
 
-    @Query("SELECT u FROM Employee u WHERE u.email = :email AND u.company.id = :companyId")
-    Optional<Employee> findByEmail(@Param("email") String email, @Param("companyId") UUID companyId);
+    @Query("SELECT u FROM Employee u WHERE u.email = :email AND u.company.id = :companyId AND u.isDeleted = false")
+    Optional<Employee> findActiveByEmail(@Param("email") String email, @Param("companyId") UUID companyId);
 
     @Query("SELECT u FROM Employee u LEFT JOIN FETCH u.driverProfile WHERE u.isDeleted = false AND u.company.id = :companyId AND u.role = :role")
     List<Employee> findAllActiveUsersByRole(@Param("role") EmployeeRole role, @Param("companyId") UUID companyId);
 
+    @Query("SELECT COUNT(u) > 0 FROM Employee u WHERE u.email = :email AND u.company.id = :companyId AND u.isDeleted = false")
     boolean existsByEmailAndCompanyId(String email, UUID companyId);
 }

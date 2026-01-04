@@ -86,39 +86,40 @@ public class EmployeeService {
 
     @Transactional
     public void deleteEmployee(UUID id) {
-        var user = employeeRepository.findActiveUserById(id, companyId)
+        var employee = employeeRepository.findActiveUserById(id, companyId)
                 .orElseThrow(EmployeeNotFoundException::new);
 
-        user.setDeleted(true);
-        user.setDeletedAt(LocalDateTime.now());
-        employeeRepository.save(user);
+        employee.setDeleted(true);
+        employee.setDeletedAt(LocalDateTime.now());
+
+        if (employee.getRole().equals(EmployeeRole.ROLE_DRIVER)) {
+            employee.removeDriverProfile(employee.getDriverProfile());
+        }
+
+        employeeRepository.save(employee);
     }
 
     @Transactional
     public EmployeeDto updateEmployee(UUID id, EmployeeUpdateRequest userRequest) {
-
-        // Verify if user exists
-        var user = employeeRepository.findById(id)
-                .filter(u -> u.getCompany().getId().equals(companyId))
+        // Verify if employee exists only on not deleted ones
+        var user = employeeRepository.findActiveUserById(id, companyId)
                 .orElseThrow(EmployeeNotFoundException::new);
 
-        // Verify if someone else has the same email
-        employeeRepository.findByEmail(userRequest.email().toLowerCase(), companyId)
+        String normalizedEmail = userRequest.email().toLowerCase();
+
+        //  // Verify if someone else has the same email only on not deleted
+        employeeRepository.findActiveByEmail(normalizedEmail, companyId)
                 .ifPresent(existing -> {
                     if (!existing.getId().equals(id)) {
                         throw new EmployeeAlreadyExistsException();
                     }
                 });
 
-
         // update
         user.setUsername(userRequest.username());
-        user.setEmail(userRequest.email().toLowerCase());
-        user.setPassword(userRequest.password());
-        user.setPhone(userRequest.phone());
-        user.setDeleted(false);
-        user.setDeletedAt(null);
-
+        user.setEmail(normalizedEmail);
+        user.setPassword(userRequest.password())
+        ;user.setPhone(userRequest.phone());
         return EmployeeMapper.toDto(employeeRepository.save(user));
     }
 
@@ -142,7 +143,7 @@ public class EmployeeService {
         profile.setLicenseExpiryDate(request.driverProfile().licenseExpiryDate());
 
         // Save
-        employee.setDriverProfile(profile);
+        employee.addDriverProfile(profile);
         return EmployeeMapper.toDto(employeeRepository.save(employee));
     }
 

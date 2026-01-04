@@ -10,3 +10,11 @@ ALTER TABLE clients DROP CONSTRAINT IF EXISTS clients_email_key;
 CREATE UNIQUE INDEX idx_client_email_active
     ON clients (email, company_id)
     WHERE deleted = false;
+
+
+ALTER TABLE employees DROP CONSTRAINT IF EXISTS employees_email_key;
+
+
+CREATE UNIQUE INDEX idx_employee_email_company_active
+    ON employees (email, company_id)
+    WHERE deleted = false;

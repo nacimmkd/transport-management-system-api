@@ -46,7 +46,15 @@ public class Employee {
     private Company company;
 
     public void addDriverProfile(DriverProfile driverProfile) {
+        if (this.driverProfile == null) return;
         this.driverProfile = driverProfile;
         driverProfile.setEmployee(this);
+    }
+
+    public void removeDriverProfile(DriverProfile driverProfile) {
+        if (driverProfile != null) {
+            driverProfile.setEmployee(null);
+            this.driverProfile = null;
+        }
     }
 }
