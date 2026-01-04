@@ -76,7 +76,7 @@ public class EmployeeService {
         // Send email with login credentials
         var name = newEmployee.getUsername();
         var email =  newEmployee.getEmail();
-        sendLoginCredentials(email, name, password);
+        //sendLoginCredentials(email, name, password);
 
         return EmployeeMapper.toDto(savedUser);
     }
