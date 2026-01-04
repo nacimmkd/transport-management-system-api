@@ -21,12 +21,12 @@ public class VehicleService {
 
 
     public VehicleDto findById(UUID id) {
-        var vehicle = vehicleRepository.findVehicleById(id,companyId).orElseThrow(VehicleNotFoundException::new);
+        var vehicle = vehicleRepository.findActiveVehicleById(id,companyId).orElseThrow(VehicleNotFoundException::new);
         return VehicleMapper.toDto(vehicle);
     }
 
     public List<VehicleDto> findAll() {
-        return vehicleRepository.findAllVehicles(companyId).stream()
+        return vehicleRepository.findAllActiveVehicles(companyId).stream()
                 .map(VehicleMapper::toDto)
                 .toList();
     }
@@ -42,7 +42,7 @@ public class VehicleService {
     public VehicleDto registerVehicle(VehicleRequest vehicleRequest) {
         var company = companyRepository.findById(companyId).orElseThrow(CompanyNotFoundException::new);
 
-        var existingVehicle = vehicleRepository.findByPlateNumber(vehicleRequest.plateNumber().toUpperCase(), companyId);
+        var existingVehicle = vehicleRepository.findActiveByPlateNumber(vehicleRequest.plateNumber().toUpperCase(), companyId);
         if(existingVehicle.isPresent()) throw new VehicleExistsException();
 
         var newVehicle = VehicleMapper.toEntity(vehicleRequest,company);
@@ -52,13 +52,13 @@ public class VehicleService {
     @Transactional
     public VehicleDto updateVehicle(UUID id, VehicleRequest vehicleRequest) {
         // findActiveClientById to not modify deleted vehicle
-        var vehicle = vehicleRepository.findVehicleById(id, companyId)
+        var vehicle = vehicleRepository.findActiveVehicleById(id, companyId)
                 .orElseThrow(VehicleNotFoundException::new);
 
         String normalizedPlate = vehicleRequest.plateNumber().toUpperCase();
 
         // Verify email only on vehicles not deleted
-        vehicleRepository.findByPlateNumber(normalizedPlate, companyId)
+        vehicleRepository.findActiveByPlateNumber(normalizedPlate, companyId)
                 .ifPresent(existing -> {
                     if (!existing.getId().equals(id)) {
                         throw new VehicleExistsException();
@@ -77,14 +77,14 @@ public class VehicleService {
 
     @Transactional
     public VehicleDto updateVehicleStatus(UUID id, UpdateStatusRequest request) {
-        var  vehicle = vehicleRepository.findVehicleById(id,companyId).orElseThrow(VehicleNotFoundException::new);
+        var  vehicle = vehicleRepository.findActiveVehicleById(id,companyId).orElseThrow(VehicleNotFoundException::new);
         vehicle.setVehicleStatus(request.vehicleStatus());
         return VehicleMapper.toDto(vehicleRepository.save(vehicle));
     }
 
     @Transactional
     public void deleteVehicle(UUID id) {
-        var vehicle = vehicleRepository.findVehicleById(id,companyId).orElseThrow(VehicleNotFoundException::new);
+        var vehicle = vehicleRepository.findActiveVehicleById(id,companyId).orElseThrow(VehicleNotFoundException::new);
         vehicle.setDeleted(true);
         vehicle.setDeletedAt(LocalDateTime.now());
         vehicleRepository.save(vehicle);

@@ -44,7 +44,7 @@ public class ClientService {
                 .orElseThrow(CompanyNotFoundException::new);
 
         String email = clientRequest.email().toLowerCase();
-        var existingClient = clientRepository.findByEmail(email, companyId);
+        var existingClient = clientRepository.findActiveByEmail(email, companyId);
 
         if (existingClient.isPresent()) throw new ClientExistsException();
 
@@ -73,7 +73,7 @@ public class ClientService {
         String email = clientRequest.email().toLowerCase();
 
         // Verify plate number only on clients not deleted
-        clientRepository.findByEmail(email, companyId)
+        clientRepository.findActiveByEmail(email, companyId)
                 .ifPresent(existing -> {
                     if (!existing.getId().equals(id)) {
                         throw new ClientExistsException();

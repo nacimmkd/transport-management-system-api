@@ -15,12 +15,12 @@ import java.util.UUID;
 public interface VehicleRepository extends JpaRepository<Vehicle, UUID>, JpaSpecificationExecutor<Vehicle> {
 
     @Query("SELECT v FROM Vehicle v WHERE v.id=:id AND v.isDeleted=false AND v.company.id=:companyId")
-    Optional<Vehicle> findVehicleById(@Param("id") UUID uuid, @Param("companyId") UUID companyId);
+    Optional<Vehicle> findActiveVehicleById(@Param("id") UUID uuid, @Param("companyId") UUID companyId);
 
     @Query("SELECT v FROM Vehicle v WHERE v.isDeleted=false AND v.company.id = :companyId")
-    List<Vehicle> findAllVehicles(@Param("companyId") UUID companyId);
+    List<Vehicle> findAllActiveVehicles(@Param("companyId") UUID companyId);
 
     @Query("SELECT v FROM Vehicle v WHERE v.plateNumber=:plateNumber AND v.company.id=:companyId AND v.isDeleted=false")
-    Optional<Vehicle> findByPlateNumber(@Param("plateNumber") String plateNumber, @Param("companyId") UUID companyId);
+    Optional<Vehicle> findActiveByPlateNumber(@Param("plateNumber") String plateNumber, @Param("companyId") UUID companyId);
 
 }

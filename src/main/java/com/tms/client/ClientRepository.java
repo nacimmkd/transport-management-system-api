@@ -20,5 +20,5 @@ public interface ClientRepository extends JpaRepository<Client, UUID>, JpaSpecif
     List<Client> findAllActiveClients(@Param("companyId") UUID companyId);
 
     @Query("SELECT c FROM Client c WHERE c.email = :email AND c.company.id=:companyId AND c.isDeleted=false")
-    Optional<Client> findByEmail(@Param("email") String email, @Param("companyId") UUID companyId);
+    Optional<Client> findActiveByEmail(@Param("email") String email, @Param("companyId") UUID companyId);
 }
