@@ -1,7 +1,7 @@
 package com.tms.delivery;
 
 import com.tms.client.ClientDto;
-import com.tms.employees.driverProfile.DriverProfileDto;
+import com.tms.employees.driver_profile.DriverProfileDto;
 import com.tms.vehicule.VehicleDto;
 import lombok.Builder;
 

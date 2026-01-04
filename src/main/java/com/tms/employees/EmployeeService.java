@@ -3,7 +3,7 @@ package com.tms.employees;
 import com.tms.common.CodeGeneratorUtil;
 import com.tms.company.CompanyNotFoundException;
 import com.tms.company.CompanyRepository;
-import com.tms.employees.driverProfile.*;
+import com.tms.employees.driver_profile.*;
 import com.tms.notification.EmailNotificationService;
 import com.tms.notification.EmailTemplates;
 import lombok.RequiredArgsConstructor;
@@ -55,29 +55,23 @@ public class EmployeeService {
     public EmployeeDto registerEmployee(EmployeeRegisterRequest employeeRequest) {
         var company = companyRepository.findById(companyId)
                 .orElseThrow(CompanyNotFoundException::new);
-
         var exists = employeeRepository.existsByEmailAndCompanyId(employeeRequest.email().toLowerCase(),companyId);
         if (exists) throw new EmployeeAlreadyExistsException();
-
         var newEmployee = EmployeeMapper.toEntity(employeeRequest, company);
-
         // if role is DRIVER, we save driverProfile
         var role = employeeRequest.role();
         if(role.equals(EmployeeAllowedRoles.ROLE_DRIVER)) {
             registerDriverProfile(newEmployee,employeeRequest.driverProfile());
         }
-
         // Save
         var password = CodeGeneratorUtil.generatePassword();
         newEmployee.setPassword(password);
         newEmployee.setEmail(employeeRequest.email().toLowerCase());
         var savedUser = employeeRepository.save(newEmployee);
-
         // Send email with login credentials
         var name = newEmployee.getUsername();
         var email =  newEmployee.getEmail();
         //sendLoginCredentials(email, name, password);
-
         return EmployeeMapper.toDto(savedUser);
     }
 
@@ -86,7 +80,6 @@ public class EmployeeService {
     public void deleteEmployee(UUID id) {
         var employee = employeeRepository.findActiveUserById(id, companyId)
                 .orElseThrow(EmployeeNotFoundException::new);
-
         employee.setDeleted(true);
         employee.setDeletedAt(LocalDateTime.now());
         employeeRepository.save(employee);
@@ -97,17 +90,14 @@ public class EmployeeService {
         // Verify if employee exists only on not deleted ones
         var user = employeeRepository.findActiveUserById(id, companyId)
                 .orElseThrow(EmployeeNotFoundException::new);
-
         String normalizedEmail = userRequest.email().toLowerCase();
-
-        //  // Verify if someone else has the same email only on not deleted
+        // Verify if someone else has the same email only on not deleted
         employeeRepository.findActiveByEmail(normalizedEmail, companyId)
                 .ifPresent(existing -> {
                     if (!existing.getId().equals(id)) {
                         throw new EmployeeAlreadyExistsException();
                     }
                 });
-
         // update
         user.setUsername(userRequest.username());
         user.setEmail(normalizedEmail);
@@ -119,22 +109,18 @@ public class EmployeeService {
     // ONLY BY ADMIN
     @Transactional
     public EmployeeDto updateDriverProfile(UUID employeeId, DriverProfileRequest request) {
-
         var employee = employeeRepository.findActiveUserById(employeeId, companyId)
                 .orElseThrow(EmployeeNotFoundException::new);
-
         // Verify if it is a Driver
         if (employee.getRole() != EmployeeRole.ROLE_DRIVER) {
             throw new DriverProfileException("Cet employé n'est pas un chauffeur.");
         }
-
         // Update
         var profile = employee.getDriverProfile();
         profile.setLicenseNumber(request.licenseNumber());
         profile.setLicenseNumber(request.licenseNumber());
         profile.setLicenseCategory(request.licenseCategory());
         profile.setLicenseExpiryDate(request.licenseExpiryDate());
-
         // Save
         employee.addDriverProfile(profile);
         return EmployeeMapper.toDto(employeeRepository.save(employee));

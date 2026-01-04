@@ -1,7 +1,7 @@
 package com.tms.delivery;
 
 import com.tms.client.ClientMapper;
-import com.tms.employees.driverProfile.DriverProfileMapper;
+import com.tms.employees.driver_profile.DriverProfileMapper;
 import com.tms.vehicule.VehicleMapper;
 
 public class DeliveryMapper {

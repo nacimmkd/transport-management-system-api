@@ -1,4 +1,4 @@
-package com.tms.employees.driverProfile;
+package com.tms.employees.driver_profile;
 
 import lombok.Builder;
 

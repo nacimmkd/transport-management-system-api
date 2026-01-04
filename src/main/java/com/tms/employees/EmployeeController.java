@@ -1,8 +1,8 @@
 package com.tms.employees;
 
 import com.tms.common.ErrorDto;
-import com.tms.employees.driverProfile.DriverProfileException;
-import com.tms.employees.driverProfile.DriverProfileRequest;
+import com.tms.employees.driver_profile.DriverProfileException;
+import com.tms.employees.driver_profile.DriverProfileRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

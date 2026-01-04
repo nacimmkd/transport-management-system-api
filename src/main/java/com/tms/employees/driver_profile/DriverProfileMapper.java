@@ -1,6 +1,4 @@
-package com.tms.employees.driverProfile;
-
-import com.tms.employees.Employee;
+package com.tms.employees.driver_profile;
 
 public class DriverProfileMapper {
 

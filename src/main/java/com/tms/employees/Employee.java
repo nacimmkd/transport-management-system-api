@@ -3,7 +3,7 @@ package com.tms.employees;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.tms.company.Company;
-import com.tms.employees.driverProfile.DriverProfile;
+import com.tms.employees.driver_profile.DriverProfile;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;

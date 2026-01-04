@@ -1,6 +1,6 @@
 package com.tms.employees;
 
-import com.tms.employees.driverProfile.DriverProfileDto;
+import com.tms.employees.driver_profile.DriverProfileDto;
 import lombok.Builder;
 
 import java.util.UUID;
