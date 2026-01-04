@@ -21,12 +21,12 @@ public class VehicleService {
 
 
     public VehicleDto findById(UUID id) {
-        var vehicle = vehicleRepository.findActiveVehicleById(id,companyId).orElseThrow(VehicleNotFoundException::new);
+        var vehicle = vehicleRepository.findVehicleById(id,companyId).orElseThrow(VehicleNotFoundException::new);
         return VehicleMapper.toDto(vehicle);
     }
 
     public List<VehicleDto> findAll() {
-        return vehicleRepository.findAllActiveVehicles(companyId).stream()
+        return vehicleRepository.findAllVehicles(companyId).stream()
                 .map(VehicleMapper::toDto)
                 .toList();
     }
@@ -52,7 +52,7 @@ public class VehicleService {
     @Transactional
     public VehicleDto updateVehicle(UUID id, VehicleRequest vehicleRequest) {
         // Changement 1 : On ne modifie QUE les véhicules actifs
-        var vehicle = vehicleRepository.findActiveVehicleById(id, companyId)
+        var vehicle = vehicleRepository.findVehicleById(id, companyId)
                 .orElseThrow(VehicleNotFoundException::new);
 
         String normalizedPlate = vehicleRequest.plateNumber().toUpperCase();
@@ -77,14 +77,14 @@ public class VehicleService {
 
     @Transactional
     public VehicleDto updateVehicleStatus(UUID id, UpdateStatusRequest request) {
-        var  vehicle = vehicleRepository.findActiveVehicleById(id,companyId).orElseThrow(VehicleNotFoundException::new);
+        var  vehicle = vehicleRepository.findVehicleById(id,companyId).orElseThrow(VehicleNotFoundException::new);
         vehicle.setVehicleStatus(request.vehicleStatus());
         return VehicleMapper.toDto(vehicleRepository.save(vehicle));
     }
 
     @Transactional
     public void deleteVehicle(UUID id) {
-        var vehicle = vehicleRepository.findActiveVehicleById(id,companyId).orElseThrow(VehicleNotFoundException::new);
+        var vehicle = vehicleRepository.findVehicleById(id,companyId).orElseThrow(VehicleNotFoundException::new);
         vehicle.setDeleted(true);
         vehicle.setDeletedAt(LocalDateTime.now());
         vehicleRepository.save(vehicle);
