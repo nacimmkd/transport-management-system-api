@@ -45,16 +45,10 @@ public class Employee {
     @ManyToOne @JoinColumn(name = "company_id")
     private Company company;
 
-    public void addDriverProfile(DriverProfile driverProfile) {
-        if (this.driverProfile == null) return;
-        this.driverProfile = driverProfile;
-        driverProfile.setEmployee(this);
+    public void addDriverProfile(DriverProfile profile) {
+        if (profile == null) return;
+        this.driverProfile = profile;
+        profile.setEmployee(this);
     }
 
-    public void removeDriverProfile(DriverProfile driverProfile) {
-        if (driverProfile != null) {
-            driverProfile.setEmployee(null);
-            this.driverProfile = null;
-        }
-    }
 }

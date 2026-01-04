@@ -91,11 +91,6 @@ public class EmployeeService {
 
         employee.setDeleted(true);
         employee.setDeletedAt(LocalDateTime.now());
-
-        if (employee.getRole().equals(EmployeeRole.ROLE_DRIVER)) {
-            employee.removeDriverProfile(employee.getDriverProfile());
-        }
-
         employeeRepository.save(employee);
     }
 
