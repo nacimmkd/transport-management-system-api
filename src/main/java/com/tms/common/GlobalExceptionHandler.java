@@ -1,5 +1,6 @@
 package com.tms.common;
 
+import com.tms.company.CompanyNotFoundException;
 import com.tms.notification.EmailSendingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,5 +13,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EmailSendingException.class)
     public ResponseEntity<ErrorDto> handleEmailSendingException(Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorDto(e.getMessage()));
+    }
+
+    @ExceptionHandler(CompanyNotFoundException.class)
+    public ResponseEntity<ErrorDto> companyNotFoundException(Exception e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDto(e.getMessage()));
     }
 }

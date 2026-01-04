@@ -2,7 +2,6 @@ package com.tms.vehicule;
 
 import com.tms.company.CompanyNotFoundException;
 import com.tms.company.CompanyRepository;
-import com.tms.employees.EmployeeAlreadyExistsException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
@@ -52,26 +51,27 @@ public class VehicleService {
 
     @Transactional
     public VehicleDto updateVehicle(UUID id, VehicleRequest vehicleRequest) {
-
-        // Verify if vehicle exists
-        var vehicle = vehicleRepository.findById(id)
-                .filter(existing -> existing.getCompany().getId().equals(companyId))
+        // Changement 1 : On ne modifie QUE les véhicules actifs
+        var vehicle = vehicleRepository.findActiveVehicleById(id, companyId)
                 .orElseThrow(VehicleNotFoundException::new);
 
-        // Verify if another vehicle has the same plate number even deleted ones
-        vehicleRepository.findByPlateNumber(vehicleRequest.plateNumber().toUpperCase(), companyId)
+        String normalizedPlate = vehicleRequest.plateNumber().toUpperCase();
+
+        // Changement 2 : La vérification d'unicité ignorera les véhicules supprimés
+        vehicleRepository.findByPlateNumber(normalizedPlate, companyId)
                 .ifPresent(existing -> {
                     if (!existing.getId().equals(id)) {
                         throw new VehicleExistsException();
                     }
                 });
 
-        // update
+        // Mise à jour
         vehicle.setBrand(vehicleRequest.brand());
         vehicle.setModel(vehicleRequest.model());
-        vehicle.setPlateNumber(vehicleRequest.plateNumber().toUpperCase());
+        vehicle.setPlateNumber(normalizedPlate);
         vehicle.setVehicleType(vehicleRequest.type());
         vehicle.setCapacityKg(vehicleRequest.capacityKg());
+
         return VehicleMapper.toDto(vehicleRepository.save(vehicle));
     }
 

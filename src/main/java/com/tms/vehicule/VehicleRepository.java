@@ -20,7 +20,7 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID>, JpaSpec
     @Query("SELECT v FROM Vehicle v WHERE v.isDeleted=false AND v.company.id = :companyId")
     List<Vehicle> findAllActiveVehicles(@Param("companyId") UUID companyId);
 
-    @Query("SELECT v FROM Vehicle v WHERE v.plateNumber=:plateNumber AND v.company.id=:companyId")
+    @Query("SELECT v FROM Vehicle v WHERE v.plateNumber=:plateNumber AND v.company.id=:companyId AND v.isDeleted=false")
     Optional<Vehicle> findByPlateNumber(@Param("plateNumber") String plateNumber, @Param("companyId") UUID companyId);
 
 }
