@@ -78,7 +78,7 @@ public class VehicleService {
     @Transactional
     public VehicleDto updateVehicleStatus(UUID id, UpdateStatusRequest request) {
         var  vehicle = vehicleRepository.findActiveVehicleById(id,companyId).orElseThrow(VehicleNotFoundException::new);
-        vehicle.setVehicleStatus(request.status());
+        vehicle.setVehicleStatus(request.vehicleStatus());
         return VehicleMapper.toDto(vehicleRepository.save(vehicle));
     }
 
