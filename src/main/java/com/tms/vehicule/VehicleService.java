@@ -44,7 +44,7 @@ public class VehicleService {
         var company = companyRepository.findById(companyId).orElseThrow(CompanyNotFoundException::new);
 
         var existingVehicle = vehicleRepository.findByPlateNumber(vehicleRequest.plateNumber().toUpperCase(), companyId);
-        if(existingVehicle.isPresent()) throw new VehicleExistsException()d ;
+        if(existingVehicle.isPresent()) throw new VehicleExistsException();
         else {
             var newVehicle = VehicleMapper.toEntity(vehicleRequest,company);
             return VehicleMapper.toDto(vehicleRepository.save(newVehicle));
