@@ -66,24 +66,25 @@ public class ClientService {
     @Transactional
     public ClientDto updateClient(UUID id, ClientRequest clientRequest) {
 
-        // Verify if client exists
-        var client = clientRepository.findById(id)
-                .filter(c -> c.getCompany().getId().equals(companyId))
+        // findActiveClientById to not modify deleted clients
+        var client = clientRepository.findActiveClientById(id, companyId)
                 .orElseThrow(ClientNotFoundException::new);
 
-        // Verify if another client has the same email
-        clientRepository.findByEmail(clientRequest.email().toLowerCase(), companyId)
+        String email = clientRequest.email().toLowerCase();
+
+        // Verify plate number only on clients not deleted
+        clientRepository.findByEmail(email, companyId)
                 .ifPresent(existing -> {
                     if (!existing.getId().equals(id)) {
                         throw new ClientExistsException();
                     }
                 });
 
-        // update
         client.setName(clientRequest.name());
         client.setAddress(clientRequest.address());
         client.setPhone(clientRequest.phone());
-        client.setEmail(clientRequest.email());
+        client.setEmail(email);
+
         return ClientMapper.toDto(clientRepository.save(client));
     }
 
