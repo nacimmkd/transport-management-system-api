@@ -3,6 +3,7 @@ package com.tms.employees;
 import com.tms.common.ErrorDto;
 import com.tms.employees.driver_profile.DriverProfileException;
 import com.tms.employees.driver_profile.DriverProfileRequest;
+import com.tms.employees.driver_profile.DriverProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import java.util.UUID;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
+    private final DriverProfileService driverProfileService;
 
 
     @GetMapping
@@ -59,7 +61,7 @@ public class EmployeeController {
     public ResponseEntity<EmployeeDto> updateDriverProfile(
             @PathVariable UUID id,
             @RequestBody DriverProfileRequest userRequest) {
-        return ResponseEntity.ok(employeeService.updateDriverProfile(id, userRequest));
+        return ResponseEntity.ok(driverProfileService.updateDriverProfile(id, userRequest));
     }
 
     @DeleteMapping("/{id}")

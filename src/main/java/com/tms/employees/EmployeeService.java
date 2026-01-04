@@ -21,6 +21,7 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final CompanyRepository companyRepository;
     private final EmailNotificationService notificationService;
+    private final DriverProfileService driverProfileService;
     private final UUID companyId = UUID.fromString("aed2f7aa-5eca-4df1-8881-87a5754350c2");
 
     public List<EmployeeDto> findAllEmployees() {
@@ -61,7 +62,7 @@ public class EmployeeService {
         // if role is DRIVER, we save driverProfile
         var role = employeeRequest.role();
         if(role.equals(EmployeeAllowedRoles.ROLE_DRIVER)) {
-            registerDriverProfile(newEmployee,employeeRequest.driverProfile());
+            driverProfileService.registerDriverProfile(newEmployee,employeeRequest.driverProfile());
         }
         // Save
         var password = CodeGeneratorUtil.generatePassword();
@@ -106,42 +107,12 @@ public class EmployeeService {
         return EmployeeMapper.toDto(employeeRepository.save(user));
     }
 
-    // ONLY BY ADMIN
-    @Transactional
-    public EmployeeDto updateDriverProfile(UUID employeeId, DriverProfileRequest request) {
-        var employee = employeeRepository.findActiveUserById(employeeId, companyId)
-                .orElseThrow(EmployeeNotFoundException::new);
-        // Verify if it is a Driver
-        if (employee.getRole() != EmployeeRole.ROLE_DRIVER) {
-            throw new DriverProfileException("Cet employé n'est pas un chauffeur.");
-        }
-        // Update
-        var profile = employee.getDriverProfile();
-        profile.setLicenseNumber(request.licenseNumber());
-        profile.setLicenseNumber(request.licenseNumber());
-        profile.setLicenseCategory(request.licenseCategory());
-        profile.setLicenseExpiryDate(request.licenseExpiryDate());
-        // Save
-        employee.addDriverProfile(profile);
-        return EmployeeMapper.toDto(employeeRepository.save(employee));
-    }
-
     public void resendCredentialsEmail(UUID id) {
         var employee = employeeRepository.findActiveUserById(id, companyId).orElseThrow(EmployeeNotFoundException::new);
         var name = employee.getUsername();
         var email = employee.getEmail();
         var password = employee.getPassword();
         sendLoginCredentials(email, name, password);
-    }
-
-
-    private void registerDriverProfile(Employee employee, DriverProfileRequest profileRequest) {
-        if (profileRequest == null) {
-            throw new DriverProfileException("Le profil de chauffeur est obligatoire pour le rôle ROLE_DRIVER");
-        }
-
-        var profileEntity = DriverProfileMapper.toEntity(profileRequest);
-        employee.addDriverProfile(profileEntity);
     }
 
     private void sendLoginCredentials(String to, String name, String password) {
