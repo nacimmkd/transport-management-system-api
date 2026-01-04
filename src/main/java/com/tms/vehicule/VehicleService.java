@@ -51,13 +51,13 @@ public class VehicleService {
 
     @Transactional
     public VehicleDto updateVehicle(UUID id, VehicleRequest vehicleRequest) {
-        // Changement 1 : On ne modifie QUE les véhicules actifs
+        // findActiveClientById to not modify deleted vehicle
         var vehicle = vehicleRepository.findVehicleById(id, companyId)
                 .orElseThrow(VehicleNotFoundException::new);
 
         String normalizedPlate = vehicleRequest.plateNumber().toUpperCase();
 
-        // Changement 2 : La vérification d'unicité ignorera les véhicules supprimés
+        // Verify email only on vehicles not deleted
         vehicleRepository.findByPlateNumber(normalizedPlate, companyId)
                 .ifPresent(existing -> {
                     if (!existing.getId().equals(id)) {
@@ -65,7 +65,7 @@ public class VehicleService {
                     }
                 });
 
-        // Mise à jour
+        // update
         vehicle.setBrand(vehicleRequest.brand());
         vehicle.setModel(vehicleRequest.model());
         vehicle.setPlateNumber(normalizedPlate);
