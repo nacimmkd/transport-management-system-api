@@ -64,9 +64,7 @@ public class EmployeeService {
         // if role is DRIVER, we save driverProfile
         var role = employeeRequest.role();
         if(role.equals(EmployeeAllowedRoles.ROLE_DRIVER)) {
-            if(employeeRequest.driverProfile() == null) throw new DriverProfileException("Le profil de chauffeur est obligatoire pour le rôle ROLE_DRIVER");
-            var profile = DriverProfileMapper.toEntity(employeeRequest.driverProfile());
-            newEmployee.addDriverProfile(profile);
+            registerDriverProfile(newEmployee,employeeRequest.driverProfile());
         }
 
         // Save
@@ -142,7 +140,6 @@ public class EmployeeService {
         return EmployeeMapper.toDto(employeeRepository.save(employee));
     }
 
-
     public void resendCredentialsEmail(UUID id) {
         var employee = employeeRepository.findActiveUserById(id, companyId).orElseThrow(EmployeeNotFoundException::new);
         var name = employee.getUsername();
@@ -151,6 +148,15 @@ public class EmployeeService {
         sendLoginCredentials(email, name, password);
     }
 
+
+    private void registerDriverProfile(Employee employee, DriverProfileRequest profileRequest) {
+        if (profileRequest == null) {
+            throw new DriverProfileException("Le profil de chauffeur est obligatoire pour le rôle ROLE_DRIVER");
+        }
+
+        var profileEntity = DriverProfileMapper.toEntity(profileRequest);
+        employee.addDriverProfile(profileEntity);
+    }
 
     private void sendLoginCredentials(String to, String name, String password) {
         var template = EmailTemplates.getEmailCredentialTemplate(name,to,password);
