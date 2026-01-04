@@ -118,7 +118,7 @@ public class EmployeeService {
 
     // ONLY BY ADMIN
     @Transactional
-    public EmployeeDto updateDriverProfile(UUID employeeId, EmployeeUpdateRequest request) {
+    public EmployeeDto updateDriverProfile(UUID employeeId, DriverProfileRequest request) {
 
         var employee = employeeRepository.findActiveUserById(employeeId, companyId)
                 .orElseThrow(EmployeeNotFoundException::new);
@@ -130,10 +130,10 @@ public class EmployeeService {
 
         // Update
         var profile = employee.getDriverProfile();
-        profile.setLicenseNumber(request.driverProfile().licenseNumber());
-        profile.setLicenseNumber(request.driverProfile().licenseNumber());
-        profile.setLicenseCategory(request.driverProfile().licenseCategory());
-        profile.setLicenseExpiryDate(request.driverProfile().licenseExpiryDate());
+        profile.setLicenseNumber(request.licenseNumber());
+        profile.setLicenseNumber(request.licenseNumber());
+        profile.setLicenseCategory(request.licenseCategory());
+        profile.setLicenseExpiryDate(request.licenseExpiryDate());
 
         // Save
         employee.addDriverProfile(profile);

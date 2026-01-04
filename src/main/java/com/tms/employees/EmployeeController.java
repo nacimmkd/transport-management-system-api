@@ -55,10 +55,10 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.updateEmployee(id, userRequest));
     }
 
-    @PutMapping("/drivers/{id}")
+    @PutMapping("/driver-profile/{id}")
     public ResponseEntity<EmployeeDto> updateDriverProfile(
             @PathVariable UUID id,
-            @RequestBody EmployeeUpdateRequest userRequest) {
+            @RequestBody DriverProfileRequest userRequest) {
         return ResponseEntity.ok(employeeService.updateDriverProfile(id, userRequest));
     }
 

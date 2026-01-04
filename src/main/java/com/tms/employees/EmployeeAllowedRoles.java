@@ -1,3 +1,3 @@
 package com.tms.employees;
 
-public enum EmployeeAllowedRoles {ROLE_MANAGER, ROLE_DRIVER }
+public enum EmployeeAllowedRoles {ROLE_DRIVER,ROLE_MANAGER}
