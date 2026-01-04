@@ -7,6 +7,7 @@ import com.tms.employees.driver_profile.*;
 import com.tms.notification.EmailNotificationService;
 import com.tms.notification.EmailTemplates;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +36,13 @@ public class EmployeeService {
         var user = employeeRepository.findActiveUserById(id, companyId)
                 .orElseThrow(EmployeeNotFoundException::new);
         return EmployeeMapper.toDto(user);
+    }
+
+    public List<EmployeeDto> searchEmployees(EmployeeSearchCriteria criteria) {
+        var spec = EmployeeSpecifications.withCriteria(criteria, companyId);
+        return employeeRepository.findAll(spec).stream()
+                .map(EmployeeMapper::toDto)
+                .toList();
     }
 
     public List<EmployeeDto> findAllManagers() {

@@ -4,6 +4,8 @@ import com.tms.common.ErrorDto;
 import com.tms.employees.driver_profile.DriverProfileException;
 import com.tms.employees.driver_profile.DriverProfileRequest;
 import com.tms.employees.driver_profile.DriverProfileService;
+import com.tms.vehicule.VehicleDto;
+import com.tms.vehicule.VehicleSearchCriteria;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +44,12 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.findAllDrivers());
     }
 
+    @PostMapping("/search")
+    public List<EmployeeDto> searchVehicles(
+            @RequestBody EmployeeSearchCriteria criteria
+    ) {
+        return employeeService.searchEmployees(criteria);
+    }
 
     @PostMapping
     public ResponseEntity<EmployeeDto> registerEmployee(@RequestBody EmployeeRegisterRequest userRequest, UriComponentsBuilder uriBuilder) {
