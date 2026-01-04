@@ -51,6 +51,7 @@ public class ClientService {
         } else {
             var newClient = ClientMapper.toEntity(clientRequest, company);
             newClient.setEmail(email);
+            newClient.setDeleted(false);
             return ClientMapper.toDto(clientRepository.save(newClient));
         }
     }
@@ -58,7 +59,7 @@ public class ClientService {
     @Transactional
     public void deleteClient(UUID id) {
         var client = clientRepository.findActiveClientById(id,companyId).orElseThrow(ClientNotFoundException::new);
-        client.setActive(false);
+        client.setDeleted(true);
         client.setDeletedAt(LocalDateTime.now());
         clientRepository.save(client);
     }
@@ -84,7 +85,7 @@ public class ClientService {
         client.setAddress(clientRequest.address());
         client.setPhone(clientRequest.phone());
         client.setEmail(clientRequest.email());
-        client.setActive(true);
+        client.setDeleted(false);
         client.setDeletedAt(null);
         return ClientMapper.toDto(clientRepository.save(client));
     }

@@ -1,4 +1,4 @@
-package com.tms.user;
+package com.tms.employees;
 
 import com.tms.company.CompanyNotFoundException;
 import com.tms.company.CompanyRepository;
@@ -12,77 +12,77 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class EmployeeService {
 
-    private final UserRepository userRepository;
+    private final EmployeeRepository userRepository;
     private final CompanyRepository companyRepository;
     private final UUID companyId = UUID.fromString("aed2f7aa-5eca-4df1-8881-87a5754350c2");
 
-    public List<UserDto> findAllUsers() {
+    public List<EmployeeDto> findAllEmployees() {
         return userRepository.findAllActiveUsers(companyId)
                 .stream()
-                .map(UserMapper::toDto)
+                .map(EmployeeMapper::toDto)
                 .toList();
     }
 
-    public UserDto findUserById(UUID id) {
+    public EmployeeDto findEmployeeById(UUID id) {
         var user = userRepository.findActiveUserById(id, companyId)
-                .orElseThrow(UserNotFoundException::new);
-        return UserMapper.toDto(user);
+                .orElseThrow(EmployeeNotFoundException::new);
+        return EmployeeMapper.toDto(user);
     }
 
-    public List<UserDto> findAllManagers() {
-        return userRepository.findAllActiveUsersByRole(UserRole.ROLE_MANAGER,companyId)
+    public List<EmployeeDto> findAllManagers() {
+        return userRepository.findAllActiveUsersByRole(EmployeeRole.ROLE_MANAGER,companyId)
                 .stream()
-                .map(UserMapper::toDto)
+                .map(EmployeeMapper::toDto)
                 .toList();
     }
 
-    public List<UserDto> findAllDrivers() {
-        return userRepository.findAllActiveUsersByRole(UserRole.ROLE_DRIVER,companyId)
+    public List<EmployeeDto> findAllDrivers() {
+        return userRepository.findAllActiveUsersByRole(EmployeeRole.ROLE_DRIVER,companyId)
                 .stream()
-                .map(UserMapper::toDto)
+                .map(EmployeeMapper::toDto)
                 .toList();
     }
 
 
     @Transactional
-    public UserDto registerUser(UserRegisterRequest userRequest) {
+    public EmployeeDto registerEmployee(EmployeeRegisterRequest userRequest) {
         var company = companyRepository.findById(companyId)
                 .orElseThrow(CompanyNotFoundException::new);
 
         var existingUser = userRepository.findByEmail(userRequest.email().toLowerCase(), companyId);
-        if (existingUser.isPresent()) throw new UserAlreadyExistsException();
+        if (existingUser.isPresent()) throw new EmployeeAlreadyExistsException();
         else {
-            var newUser = UserMapper.toEntity(userRequest, company);
+            var newUser = EmployeeMapper.toEntity(userRequest, company);
             newUser.setEmail(userRequest.email().toLowerCase());
-            return UserMapper.toDto(userRepository.save(newUser));
+            return EmployeeMapper.toDto(userRepository.save(newUser));
         }
     }
 
     @Transactional
-    public void deleteUser(UUID id) {
+    public void deleteEmployee(UUID id) {
         var user = userRepository.findActiveUserById(id, companyId)
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(EmployeeNotFoundException::new);
 
-        user.setActive(false);
+        user.setDeleted(true);
         user.setDeletedAt(LocalDateTime.now());
         userRepository.save(user);
     }
 
     @Transactional
-    public UserDto updateUser(UUID id, UserRegisterRequest userRequest) {
+    public EmployeeDto updateEmployee(UUID id, EmployeeRegisterRequest userRequest) {
 
         // Verify if user exists
         var user = userRepository.findById(id)
                 .filter(u -> u.getCompany().getId().equals(companyId))
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(EmployeeNotFoundException::new);
 
         // Verify if someone else has the same email
         userRepository.findByEmail(userRequest.email().toLowerCase(), companyId)
                 .ifPresent(existing -> {
                     if (!existing.getId().equals(id)) {
-                        throw new UserAlreadyExistsException();
+                        throw new EmployeeAlreadyExistsException();
                     }
                 });
 
@@ -90,12 +90,12 @@ public class UserService {
         user.setUsername(userRequest.username());
         user.setEmail(userRequest.email().toLowerCase());
         user.setPassword(userRequest.password());
-        user.setRole(UserRole.valueOf(userRequest.role().name()));
+        user.setRole(EmployeeRole.valueOf(userRequest.role().name()));
         user.setPhone(userRequest.phone());
-        user.setActive(true);
+        user.setDeleted(false);
         user.setDeletedAt(null);
 
-        return UserMapper.toDto(userRepository.save(user));
+        return EmployeeMapper.toDto(userRepository.save(user));
     }
 
 }

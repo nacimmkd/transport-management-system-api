@@ -22,8 +22,8 @@ public class Client {
     private String email;
     private String address;
 
-    @Column(name = "is_active")
-    private boolean isActive;
+    @Column(name = "deleted")
+    private boolean isDeleted;
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;

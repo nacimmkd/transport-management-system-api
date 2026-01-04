@@ -15,7 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "deliveries_history")
+@Table(name = "delivery_history")
 public class DeliveryHistory {
     @Id @GeneratedValue(strategy = GenerationType.UUID) private UUID id;
 

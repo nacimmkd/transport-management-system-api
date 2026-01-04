@@ -1,4 +1,4 @@
-package com.tms.user;
+package com.tms.employees;
 
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -18,8 +18,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "employees")
+public class Employee {
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String username;
@@ -30,26 +30,20 @@ public class User {
     @Enumerated(EnumType.STRING)
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "role", columnDefinition = "user_role")
-    private UserRole role;
+    private EmployeeRole role;
 
-    @Column(name = "is_active")
-    private boolean isActive;
+    @Column(name = "deleted")
+    private boolean isDeleted;
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "employee")
     @JsonManagedReference
     private Driver driverProfile;
 
     @ManyToOne @JoinColumn(name = "company_id")
     private Company company;
 
-
-    // METHODS
-    public void activateUser(){
-        this.isActive = true;
-        this.deletedAt = null;
-    }
 
 }

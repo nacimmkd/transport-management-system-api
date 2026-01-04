@@ -2,7 +2,7 @@ package com.tms.vehicule;
 
 import com.tms.company.CompanyNotFoundException;
 import com.tms.company.CompanyRepository;
-import com.tms.user.UserAlreadyExistsException;
+import com.tms.employees.EmployeeAlreadyExistsException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
@@ -44,7 +44,7 @@ public class VehicleService {
         var company = companyRepository.findById(companyId).orElseThrow(CompanyNotFoundException::new);
 
         var existingVehicle = vehicleRepository.findByPlateNumber(vehicleRequest.plateNumber().toUpperCase(), companyId);
-        if(existingVehicle.isPresent()) throw new UserAlreadyExistsException();
+        if(existingVehicle.isPresent()) throw new EmployeeAlreadyExistsException();
         else {
             var newVehicle = VehicleMapper.toEntity(vehicleRequest,company);
             return VehicleMapper.toDto(vehicleRepository.save(newVehicle));
@@ -74,7 +74,7 @@ public class VehicleService {
         vehicle.setVehicleType(vehicleRequest.type());
         vehicle.setCapacityKg(vehicleRequest.capacityKg());
         vehicle.setDeletedAt(null);
-        vehicle.setActive(true);
+        vehicle.setDeleted(false);
         return VehicleMapper.toDto(vehicleRepository.save(vehicle));
     }
 
@@ -88,7 +88,7 @@ public class VehicleService {
     @Transactional
     public void deleteVehicle(UUID id) {
         var vehicle = vehicleRepository.findActiveVehicleById(id,companyId).orElseThrow(VehicleNotFoundException::new);
-        vehicle.setActive(false);
+        vehicle.setDeleted(true);
         vehicle.setDeletedAt(LocalDateTime.now());
         vehicleRepository.save(vehicle);
     }

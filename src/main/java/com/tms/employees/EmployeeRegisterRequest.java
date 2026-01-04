@@ -1,10 +1,10 @@
-package com.tms.user;
+package com.tms.employees;
 
-public record UserRegisterRequest(
+public record EmployeeRegisterRequest(
         String username,
         String email,
         String password,
         String phone,
-        UserAllowedRoles role
+        EmployeeAllowedRoles role
 ) {
 }

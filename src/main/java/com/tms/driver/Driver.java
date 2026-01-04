@@ -1,7 +1,7 @@
 package com.tms.driver;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.tms.user.User;
+import com.tms.employees.Employee;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -17,7 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "drivers")
+@Table(name = "driver_profile")
 public class Driver {
 
     @Id @GeneratedValue(strategy = GenerationType.UUID)
@@ -33,7 +33,7 @@ public class Driver {
     @Column(name = "license_expiry_date")
     private LocalDateTime licenseExpiryDate;
 
-    @OneToOne(fetch = FetchType.LAZY) @JoinColumn(name = "user_id")
+    @OneToOne(fetch = FetchType.LAZY) @JoinColumn(name = "employee_id")
     @JsonBackReference
-    private User user;
+    private Employee employee;
 }

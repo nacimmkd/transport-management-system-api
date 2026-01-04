@@ -22,8 +22,8 @@ public class Company {
 
     private String name;
 
-    @Column(updatable = false) @Builder.Default
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     @Column(length = 9, unique = true, columnDefinition = "char(9)") @JdbcTypeCode(java.sql.Types.CHAR)
     private String siren;
@@ -31,10 +31,10 @@ public class Company {
     private String email;
     private String phone;
 
-    @Builder.Default
-    private boolean isActive = true;
+    @Column(name = "deleted")
+    private boolean isDeleted;
 
-    @Column(name = "deleted_at") @Builder.Default
-    private LocalDateTime deletedAt = null;
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
 }

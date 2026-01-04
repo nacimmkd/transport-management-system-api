@@ -1,15 +1,15 @@
-package com.tms.user;
+package com.tms.employees;
 
 import lombok.Builder;
 
 import java.util.UUID;
 
 @Builder
-public record UserDto(
+public record EmployeeDto(
         UUID id,
         String username,
         String email,
         String phone,
-        UserRole role
+        EmployeeRole role
 ) {
 }

@@ -14,10 +14,10 @@ import java.util.UUID;
 @Repository
 public interface VehicleRepository extends JpaRepository<Vehicle, UUID>, JpaSpecificationExecutor<Vehicle> {
 
-    @Query("SELECT v FROM Vehicle v WHERE v.id=:id AND v.isActive=true AND v.company.id=:companyId")
+    @Query("SELECT v FROM Vehicle v WHERE v.id=:id AND v.isDeleted=false AND v.company.id=:companyId")
     Optional<Vehicle> findActiveVehicleById(@Param("id") UUID uuid, @Param("companyId") UUID companyId);
 
-    @Query("SELECT v FROM Vehicle v WHERE v.isActive = true AND v.company.id = :companyId")
+    @Query("SELECT v FROM Vehicle v WHERE v.isDeleted=false AND v.company.id = :companyId")
     List<Vehicle> findAllActiveVehicles(@Param("companyId") UUID companyId);
 
     @Query("SELECT v FROM Vehicle v WHERE v.plateNumber=:plateNumber AND v.company.id=:companyId")

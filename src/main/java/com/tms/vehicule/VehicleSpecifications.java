@@ -18,7 +18,7 @@ public class VehicleSpecifications {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            predicates.add(cb.isTrue(root.get("isActive")));
+            predicates.add(cb.isFalse(root.get("isDeleted")));
             predicates.add(cb.equal(root.get("company").get("id"), companyId));
 
             if (criteria.getStatus() != null) {

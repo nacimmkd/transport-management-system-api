@@ -37,8 +37,8 @@ public class Vehicle {
     @Builder.Default
     private VehicleStatus vehicleStatus = VehicleStatus.AVAILABLE;
 
-    @Column(name = "is_active")
-    private boolean isActive;
+    @Column(name = "deleted")
+    private boolean isDeleted;
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
