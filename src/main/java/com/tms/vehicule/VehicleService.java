@@ -45,10 +45,9 @@ public class VehicleService {
 
         var existingVehicle = vehicleRepository.findByPlateNumber(vehicleRequest.plateNumber().toUpperCase(), companyId);
         if(existingVehicle.isPresent()) throw new VehicleExistsException();
-        else {
-            var newVehicle = VehicleMapper.toEntity(vehicleRequest,company);
-            return VehicleMapper.toDto(vehicleRepository.save(newVehicle));
-        }
+
+        var newVehicle = VehicleMapper.toEntity(vehicleRequest,company);
+        return VehicleMapper.toDto(vehicleRepository.save(newVehicle));
     }
 
     @Transactional
@@ -59,8 +58,8 @@ public class VehicleService {
                 .filter(existing -> existing.getCompany().getId().equals(companyId))
                 .orElseThrow(VehicleNotFoundException::new);
 
-        // Verify if another vehicle has the same plate number
-        vehicleRepository.findByPlateNumber(vehicleRequest.plateNumber(), companyId)
+        // Verify if another vehicle has the same plate number even deleted ones
+        vehicleRepository.findByPlateNumber(vehicleRequest.plateNumber().toUpperCase(), companyId)
                 .ifPresent(existing -> {
                     if (!existing.getId().equals(id)) {
                         throw new VehicleExistsException();
@@ -70,11 +69,9 @@ public class VehicleService {
         // update
         vehicle.setBrand(vehicleRequest.brand());
         vehicle.setModel(vehicleRequest.model());
-        vehicle.setPlateNumber(vehicleRequest.plateNumber());
+        vehicle.setPlateNumber(vehicleRequest.plateNumber().toUpperCase());
         vehicle.setVehicleType(vehicleRequest.type());
         vehicle.setCapacityKg(vehicleRequest.capacityKg());
-        vehicle.setDeletedAt(null);
-        vehicle.setDeleted(false);
         return VehicleMapper.toDto(vehicleRepository.save(vehicle));
     }
 
