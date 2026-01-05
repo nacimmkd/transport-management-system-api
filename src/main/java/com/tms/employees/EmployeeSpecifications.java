@@ -35,7 +35,8 @@ public class EmployeeSpecifications {
                 Predicate activeStatus = deliveryRoot.get("status").in(
                         DeliveryStatus.PENDING,
                         DeliveryStatus.ASSIGNED,
-                        DeliveryStatus.IN_TRANSIT
+                        DeliveryStatus.IN_TRANSIT,
+                        DeliveryStatus.ARRIVED
                 );
                 Predicate timeOverlap = cb.and(
                         cb.lessThanOrEqualTo(deliveryRoot.get("plannedStartTime"), criteria.availableAt()),

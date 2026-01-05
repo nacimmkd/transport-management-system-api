@@ -21,23 +21,23 @@ public class VehicleSpecifications {
             predicates.add(cb.isFalse(root.get("isDeleted")));
             predicates.add(cb.equal(root.get("company").get("id"), companyId));
 
-            if (criteria.getStatus() != null) {
-                predicates.add(cb.equal(root.get("vehicleStatus"), criteria.getStatus()));
+            if (criteria.status() != null) {
+                predicates.add(cb.equal(root.get("vehicleStatus"), criteria.status()));
             }
 
-            if (criteria.getType() != null) {
-                predicates.add(cb.equal(root.get("vehicleType"), criteria.getType()));
+            if (criteria.type() != null) {
+                predicates.add(cb.equal(root.get("vehicleType"), criteria.type()));
             }
 
-            if (criteria.getPlateNumber() != null && !criteria.getPlateNumber().isEmpty()) {
-                predicates.add(cb.like(root.get("plateNumber"), "%" + criteria.getPlateNumber() + "%"));
+            if (criteria.plateNumber() != null && !criteria.plateNumber().isEmpty()) {
+                predicates.add(cb.like(root.get("plateNumber"), "%" + criteria.plateNumber() + "%"));
             }
 
-            if(criteria.getMinCapacityKg() != null) {
-                predicates.add(cb.greaterThanOrEqualTo(root.get("capacityKg"), criteria.getMinCapacityKg()));
+            if(criteria.minCapacityKg() != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("capacityKg"), criteria.minCapacityKg()));
             }
 
-            if (criteria.getAvailableAt() != null) {
+            if (criteria.availableAt() != null) {
                 Subquery<UUID> subquery = query.subquery(UUID.class);
                 Root<Delivery> delivery = subquery.from(Delivery.class);
 
@@ -47,7 +47,7 @@ public class VehicleSpecifications {
                 Predicate statusIn = delivery.get("status").in(DeliveryStatus.PENDING, DeliveryStatus.ASSIGNED, DeliveryStatus.IN_TRANSIT, DeliveryStatus.ARRIVED);
 
                 Predicate timeOverlap = cb.between(
-                        cb.literal(criteria.getAvailableAt()),
+                        cb.literal(criteria.availableAt()),
                         delivery.get("plannedStartTime"),
                         delivery.get("requestedDeliveryTime")
                 );

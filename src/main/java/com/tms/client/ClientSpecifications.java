@@ -16,9 +16,9 @@ public class ClientSpecifications {
             predicates.add(cb.isFalse(root.get("isDeleted")));
             predicates.add(cb.equal(root.get("company").get("id"), companyId));
 
-            if(criteria.getName() != null) predicates.add(cb.equal(root.get("name"), criteria.getName()));
-            if(criteria.getEmail() != null) predicates.add(cb.equal(root.get("email"), criteria.getEmail()));
-            if(criteria.getPhone() != null) predicates.add(cb.equal(root.get("phone"), criteria.getPhone()));
+            if(criteria.name() != null) predicates.add(cb.equal(root.get("name"), criteria.name()));
+            if(criteria.email() != null) predicates.add(cb.equal(root.get("email"), criteria.email()));
+            if(criteria.phone() != null) predicates.add(cb.equal(root.get("phone"), criteria.phone()));
 
             return cb.and(predicates.toArray(new Predicate[0]));
         };

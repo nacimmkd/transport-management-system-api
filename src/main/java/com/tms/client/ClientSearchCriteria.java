@@ -1,10 +1,9 @@
 package com.tms.client;
 
-import lombok.Data;
 
-@Data
-public class ClientSearchCriteria {
-    private String name;
-    private String phone;
-    private String email;
+public record ClientSearchCriteria(
+        String name,
+        String phone,
+        String email
+) {
 }
