@@ -47,8 +47,13 @@ public class Employee {
 
     public void addDriverProfile(DriverProfile profile) {
         if (profile == null) return;
-        this.driverProfile = profile;
         profile.setEmployee(this);
+        this.driverProfile = profile;
+    }
+
+    public void deleteDriverProfile(DriverProfile profile) {
+        if (profile == null) return;
+        driverProfile.setLicenseNumber(profile.getLicenseNumber() + "_DELETED_" +  UUID.randomUUID());
     }
 
 }

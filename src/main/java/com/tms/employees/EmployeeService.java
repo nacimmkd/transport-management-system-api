@@ -84,6 +84,7 @@ public class EmployeeService {
                 .orElseThrow(EmployeeNotFoundException::new);
         employee.setDeleted(true);
         employee.setDeletedAt(LocalDateTime.now());
+        employee.deleteDriverProfile(employee.getDriverProfile());
         employeeRepository.save(employee);
     }
 
