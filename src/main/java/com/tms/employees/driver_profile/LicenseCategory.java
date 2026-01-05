@@ -1,3 +1,3 @@
 package com.tms.employees.driver_profile;
 
-public enum LicenseType { B, C, CE }
+public enum LicenseCategory { B, C, CE }

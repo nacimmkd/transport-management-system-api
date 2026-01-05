@@ -28,7 +28,7 @@ public class DriverProfile {
 
     @Enumerated(EnumType.STRING) @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "license_category")
-    private LicenseType licenseCategory;
+    private LicenseCategory licenseCategory;
 
     @Column(name = "license_expiry_date")
     private LocalDate licenseExpiryDate;

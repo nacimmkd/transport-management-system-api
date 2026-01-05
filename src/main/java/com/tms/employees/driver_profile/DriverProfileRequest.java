@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public record DriverProfileRequest(
         String licenseNumber,
-        LicenseType licenseCategory,
+        LicenseCategory licenseCategory,
         LocalDate licenseExpiryDate
 ) {
 }

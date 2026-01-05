@@ -1,12 +1,15 @@
 package com.tms.employees.driver_profile;
 
+import com.tms.delivery.Delivery;
 import com.tms.employees.*;
+import com.tms.vehicule.Vehicle;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -16,6 +19,13 @@ public class DriverProfileService {
     private final EmployeeRepository employeeRepository;
     private final UUID companyId = UUID.fromString("aed2f7aa-5eca-4df1-8881-87a5754350c2");
 
+
+    public List<EmployeeDto> findAllDrivers() {
+        return employeeRepository.findAllActiveUsersByRole(EmployeeRole.ROLE_DRIVER,companyId)
+                .stream()
+                .map(EmployeeMapper::toDto)
+                .toList();
+    }
 
     public void registerDriverProfile(Employee employee, DriverProfileRequest profileRequest) {
         if (profileRequest == null) {
@@ -46,28 +56,30 @@ public class DriverProfileService {
     }
 
 
-    public void validateDriver(UUID employeeId) {
-        // GET active driver
-        var employee = employeeRepository.findActiveUserById(employeeId, companyId)
-                .orElseThrow(EmployeeNotFoundException::new);
-        if (employee.getRole() != EmployeeRole.ROLE_DRIVER) {
-            throw new DriverProfileException("L'employé spécifié n'est pas un chauffeur.");
-        }
-        var profile = employee.getDriverProfile();
-        if (profile == null) {
-            throw new DriverProfileException("Le chauffeur n'a pas de profil de permis enregistré.");
-        }
-        // validate driver license
-        if(isDriverLicenseExpiredAt(profile,LocalDateTime.now())) {
-            throw new DriverProfileException("Le permis est expiré");
-        }
+    public List<EmployeeDto> getAvailableDriversAt(LocalDateTime requestedTime, LicenseCategory licenseCategory) {
+        var criteria = EmployeeSearchCriteria.builder()
+                .role(EmployeeAllowedRoles.ROLE_DRIVER)
+                .licenseCategory(licenseCategory)
+                .availableAt(requestedTime).build();
+        var specification = EmployeeSpecifications.withCriteria(criteria,companyId);
+        return employeeRepository.findAll(specification).stream()
+                .map(EmployeeMapper::toDto)
+                .toList();
     }
 
-    // TO BE COMPLETED
-    public boolean isDriverAvailableAt(UUID employeeId, LocalDateTime requestedTime) {
-        return false;
+    // employee is driver
+    public boolean isDriverValidAndAvailableAt(Employee employee,Vehicle vehicle, LocalDateTime requestedTime) {
+        var isExpired = isDriverLicenseExpiredAt(employee.getDriverProfile(), LocalDateTime.now());
+        if(isExpired) throw new DriverProfileException("Le permis est expiré");
+        var requitedLicense = getRequiredLicenseCategoryForDelivery(vehicle);
+        var criteria = EmployeeSearchCriteria.builder()
+                .availableAt(requestedTime)
+                .role(EmployeeAllowedRoles.ROLE_DRIVER)
+                .build();
+        var spec = EmployeeSpecifications.withCriteria(criteria, companyId);
+        spec = spec.and((root, query, cb) -> cb.equal(root.get("id"), employee.getId()));
+        return employeeRepository.exists(spec);
     }
-
 
     private boolean isDriverLicenseExpiredAt(DriverProfile profile, LocalDateTime dateTimeToTest) {
         if (profile.getLicenseExpiryDate() == null) {
@@ -75,5 +87,14 @@ public class DriverProfileService {
         }
         LocalDate date = dateTimeToTest.toLocalDate();
         return date.isAfter(profile.getLicenseExpiryDate());
+    }
+
+    public LicenseCategory getRequiredLicenseCategoryForDelivery(Vehicle vehicle) {
+        var vehicleType = vehicle.getVehicleType();
+        return switch (vehicleType) {
+            case TRUCK -> LicenseCategory.C;
+            case HEAVY_TRUCK -> LicenseCategory.CE;
+            default -> LicenseCategory.B;
+        };
     }
 }

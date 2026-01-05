@@ -7,7 +7,7 @@ import java.time.LocalDate;
 @Builder
 public record DriverProfileDto(
         String licenseNumber,
-        LicenseType licenseCategory,
+        LicenseCategory licenseCategory,
         LocalDate licenseExpiryDate
 ) {
 }

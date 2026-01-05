@@ -4,14 +4,15 @@ import com.tms.common.ErrorDto;
 import com.tms.employees.driver_profile.DriverProfileException;
 import com.tms.employees.driver_profile.DriverProfileRequest;
 import com.tms.employees.driver_profile.DriverProfileService;
-import com.tms.vehicule.VehicleDto;
-import com.tms.vehicule.VehicleSearchCriteria;
+import com.tms.employees.driver_profile.LicenseCategory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,27 +26,34 @@ public class EmployeeController {
 
 
     @GetMapping
-    public ResponseEntity<List<EmployeeDto>> getAllEmployees() {
-        return ResponseEntity.ok(employeeService.findAllEmployees());
+    public List<EmployeeDto> getAllEmployees() {
+        return employeeService.findAllEmployees();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable UUID id) {
-        return ResponseEntity.ok(employeeService.findEmployeeById(id));
+    public EmployeeDto getEmployeeById(@PathVariable UUID id) {
+        return employeeService.findEmployeeById(id);
     }
 
     @GetMapping("/managers")
-    public ResponseEntity<List<EmployeeDto>> getAllManagers() {
-        return ResponseEntity.ok(employeeService.findAllManagers());
+    public List<EmployeeDto> getAllManagers() {
+        return employeeService.findAllManagers();
     }
 
+
     @GetMapping("/drivers")
-    public ResponseEntity<List<EmployeeDto>> getAllDrivers() {
-        return ResponseEntity.ok(employeeService.findAllDrivers());
+    public List<EmployeeDto> getAllDrivers(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime availableAt,
+            @RequestParam(required = false) LicenseCategory licenseType)
+    {
+        if(availableAt != null) {
+            return driverProfileService.getAvailableDriversAt(availableAt, licenseType);
+        }
+        return driverProfileService.findAllDrivers();
     }
 
     @PostMapping("/search")
-    public List<EmployeeDto> searchVehicles(
+    public List<EmployeeDto> searchEmployees(
             @RequestBody EmployeeSearchCriteria criteria
     ) {
         return employeeService.searchEmployees(criteria);

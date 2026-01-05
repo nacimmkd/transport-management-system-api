@@ -23,8 +23,11 @@ public class EmployeeSpecifications {
 
             if(criteria.username() != null) predicates.add(cb.equal(root.get("name"), criteria.username()));
             if(criteria.email() != null) predicates.add(cb.equal(root.get("email"), criteria.email()));
-            if(criteria.phone() != null) predicates.add(cb.equal(root.get("email"), criteria.phone()));
-            if(criteria.role() != null) predicates.add(cb.equal(root.get("phone"), criteria.role()));
+            if(criteria.phone() != null) predicates.add(cb.equal(root.get("phone"), criteria.phone()));
+            if(criteria.role() != null) predicates.add(cb.equal(root.get("role"), criteria.role()));
+            if(criteria.licenseCategory() != null) predicates.add(cb.equal(root.get("licenseCategory"), criteria.licenseCategory()));
+            if(criteria.licenseNumber() != null) predicates.add(cb.equal(root.get("licenseNumber"), criteria.licenseNumber()));
+
             if (EmployeeAllowedRoles.ROLE_DRIVER.equals(criteria.role()) && criteria.availableAt() != null) {
                 Subquery<UUID> subquery = query.subquery(UUID.class);
                 Root<Delivery> deliveryRoot = subquery.from(Delivery.class);

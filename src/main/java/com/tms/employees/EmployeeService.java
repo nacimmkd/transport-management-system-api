@@ -52,13 +52,6 @@ public class EmployeeService {
                 .toList();
     }
 
-    public List<EmployeeDto> findAllDrivers() {
-        return employeeRepository.findAllActiveUsersByRole(EmployeeRole.ROLE_DRIVER,companyId)
-                .stream()
-                .map(EmployeeMapper::toDto)
-                .toList();
-    }
-
 
     @Transactional
     public EmployeeDto registerEmployee(EmployeeRegisterRequest employeeRequest) {
