@@ -1,10 +1,10 @@
 package com.tms.employees.driver_profile;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public record DriverProfileRequest(
         String licenseNumber,
         LicenseType licenseCategory,
-        LocalDateTime licenseExpiryDate
+        LocalDate licenseExpiryDate
 ) {
 }

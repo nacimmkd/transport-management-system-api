@@ -1,5 +1,7 @@
 package com.tms.employees.driver_profile;
 
+import java.time.LocalDate;
+
 public class DriverProfileMapper {
 
     public static DriverProfileDto toDto(DriverProfile driver) {
@@ -7,15 +9,15 @@ public class DriverProfileMapper {
             return null;
         }
         return DriverProfileDto.builder()
-                .licenseNumber(driver.getLicenseNumber())
+                .licenseNumber(driver.getLicenseNumber().toUpperCase())
                 .licenseCategory(driver.getLicenseCategory())
-                .licenseExpiryDate(driver.getLicenseNumber())
+                .licenseExpiryDate(driver.getLicenseExpiryDate())
                 .build();
     }
 
     public static DriverProfile toEntity(DriverProfileRequest driverRequest) {
         return DriverProfile.builder()
-                .licenseNumber(driverRequest.licenseNumber())
+                .licenseNumber(driverRequest.licenseNumber().toUpperCase())
                 .licenseCategory(driverRequest.licenseCategory())
                 .licenseExpiryDate(driverRequest.licenseExpiryDate())
                 .build();

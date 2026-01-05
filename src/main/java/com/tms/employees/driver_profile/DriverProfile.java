@@ -7,7 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 
@@ -31,7 +31,7 @@ public class DriverProfile {
     private LicenseType licenseCategory;
 
     @Column(name = "license_expiry_date")
-    private LocalDateTime licenseExpiryDate;
+    private LocalDate licenseExpiryDate;
 
     @OneToOne @JoinColumn(name = "employee_id")
     @JsonBackReference
