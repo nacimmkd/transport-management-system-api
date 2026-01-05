@@ -56,6 +56,7 @@ public class DriverProfileService {
     }
 
 
+    // get user with there licence category
     public List<EmployeeDto> getAvailableDriversAt(LocalDateTime requestedTime, LicenseCategory licenseCategory) {
         var criteria = EmployeeSearchCriteria.builder()
                 .role(EmployeeAllowedRoles.ROLE_DRIVER)
@@ -70,8 +71,9 @@ public class DriverProfileService {
     // employee is driver
     public boolean isDriverValidAndAvailableAt(Employee employee,Vehicle vehicle, LocalDateTime requestedTime) {
         var isExpired = isDriverLicenseExpiredAt(employee.getDriverProfile(), LocalDateTime.now());
-        if(isExpired) throw new DriverProfileException("Le permis est expiré");
-        var requitedLicense = getRequiredLicenseCategoryForDelivery(vehicle);
+        if(isExpired) return false;
+        var requiredLicense = getRequiredLicenseCategoryForDelivery(vehicle);
+        if(requiredLicense == null) return false;
         var criteria = EmployeeSearchCriteria.builder()
                 .availableAt(requestedTime)
                 .role(EmployeeAllowedRoles.ROLE_DRIVER)
@@ -81,13 +83,15 @@ public class DriverProfileService {
         return employeeRepository.exists(spec);
     }
 
+
     private boolean isDriverLicenseExpiredAt(DriverProfile profile, LocalDateTime dateTimeToTest) {
         if (profile.getLicenseExpiryDate() == null) {
-            throw new DriverProfileException("La date d'expiration du permis est manquante.");
+            return false;
         }
         LocalDate date = dateTimeToTest.toLocalDate();
         return date.isAfter(profile.getLicenseExpiryDate());
     }
+
 
     public LicenseCategory getRequiredLicenseCategoryForDelivery(Vehicle vehicle) {
         var vehicleType = vehicle.getVehicleType();
