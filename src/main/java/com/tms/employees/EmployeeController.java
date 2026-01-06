@@ -1,10 +1,9 @@
 package com.tms.employees;
 
 import com.tms.common.ErrorDto;
-import com.tms.employees.driver_profile.DriverProfileException;
-import com.tms.employees.driver_profile.DriverProfileRequest;
-import com.tms.employees.driver_profile.DriverProfileService;
-import com.tms.employees.driver_profile.LicenseCategory;
+import com.tms.employees.driver.DriverProfileException;
+import com.tms.employees.driver.DriverService;
+import com.tms.employees.driver.LicenseCategory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -22,7 +21,7 @@ import java.util.UUID;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
-    private final DriverProfileService driverProfileService;
+    private final DriverService driverService;
 
 
     @GetMapping
@@ -47,9 +46,9 @@ public class EmployeeController {
             @RequestParam(required = false) LicenseCategory licenseType)
     {
         if(availableAt != null) {
-            return driverProfileService.getAvailableDriversAt(availableAt, licenseType);
+            return driverService.getAvailableDriversAt(availableAt, licenseType);
         }
-        return driverProfileService.findAllDrivers();
+        return driverService.findAllDrivers();
     }
 
     @PostMapping("/search")
@@ -71,13 +70,6 @@ public class EmployeeController {
             @PathVariable UUID id,
             @RequestBody EmployeeUpdateRequest userRequest) {
         return ResponseEntity.ok(employeeService.updateEmployee(id, userRequest));
-    }
-
-    @PutMapping("/driver-profile/{id}")
-    public ResponseEntity<EmployeeDto> updateDriverProfile(
-            @PathVariable UUID id,
-            @RequestBody DriverProfileRequest userRequest) {
-        return ResponseEntity.ok(driverProfileService.updateDriverProfile(id, userRequest));
     }
 
     @DeleteMapping("/{id}")

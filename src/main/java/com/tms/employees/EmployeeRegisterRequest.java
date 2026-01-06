@@ -1,6 +1,6 @@
 package com.tms.employees;
 
-import com.tms.employees.driver_profile.DriverProfileRequest;
+import com.tms.employees.driver.DriverProfileRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public record EmployeeRegisterRequest(

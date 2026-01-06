@@ -1,7 +1,7 @@
 package com.tms.delivery;
 
 import com.tms.client.Client;
-import com.tms.employees.driver_profile.DriverProfile;
+import com.tms.employees.driver.DriverProfile;
 import com.tms.company.Company;
 import com.tms.vehicule.Vehicle;
 import jakarta.persistence.*;

@@ -1,8 +1,11 @@
-package com.tms.employees.driver_profile;
+package com.tms.employees.driver;
+
+import lombok.Builder;
 
 import java.time.LocalDate;
 
-public record DriverProfileRequest(
+@Builder
+public record DriverProfileDto(
         String licenseNumber,
         LicenseCategory licenseCategory,
         LocalDate licenseExpiryDate

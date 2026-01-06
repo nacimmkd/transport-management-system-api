@@ -1,6 +1,6 @@
 package com.tms.delivery;
 
-import com.tms.employees.driver_profile.DriverProfile;
+import com.tms.employees.driver.DriverProfile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,7 @@
 package com.tms.employees;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.tms.employees.driver_profile.LicenseCategory;
+import com.tms.employees.driver.LicenseCategory;
 import lombok.Builder;
 
 import java.time.LocalDateTime;

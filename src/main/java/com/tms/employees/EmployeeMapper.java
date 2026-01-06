@@ -1,7 +1,7 @@
 package com.tms.employees;
 
 import com.tms.company.Company;
-import com.tms.employees.driver_profile.DriverProfileMapper;
+import com.tms.employees.driver.DriverProfileMapper;
 
 public class EmployeeMapper {
 

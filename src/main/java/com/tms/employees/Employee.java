@@ -3,7 +3,7 @@ package com.tms.employees;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.tms.company.Company;
-import com.tms.employees.driver_profile.DriverProfile;
+import com.tms.employees.driver.DriverProfile;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -38,7 +38,7 @@ public class Employee {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    @OneToOne(mappedBy = "employee", cascade = CascadeType.PERSIST)
+    @OneToOne(mappedBy = "employee", cascade = {CascadeType.PERSIST, CascadeType.MERGE,  CascadeType.REFRESH})
     @JsonManagedReference
     private DriverProfile driverProfile;
 
@@ -54,6 +54,13 @@ public class Employee {
     public void deleteDriverProfile(DriverProfile profile) {
         if (profile == null) return;
         driverProfile.setLicenseNumber(profile.getLicenseNumber() + "_DELETED_" +  UUID.randomUUID());
+    }
+
+    public void updateDriverProfile(DriverProfile profiler) {
+        if (profiler == null) return;
+        this.driverProfile.setLicenseNumber(profiler.getLicenseNumber().toUpperCase());
+        this.driverProfile.setLicenseExpiryDate(profiler.getLicenseExpiryDate());
+        this.driverProfile.setLicenseCategory(profiler.getLicenseCategory());
     }
 
 }

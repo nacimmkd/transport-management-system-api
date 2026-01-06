@@ -1,4 +1,4 @@
-package com.tms.employees.driver_profile;
+package com.tms.employees.driver;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.tms.employees.Employee;

@@ -3,11 +3,10 @@ package com.tms.employees;
 import com.tms.common.CodeGeneratorUtil;
 import com.tms.company.CompanyNotFoundException;
 import com.tms.company.CompanyRepository;
-import com.tms.employees.driver_profile.*;
+import com.tms.employees.driver.*;
 import com.tms.notification.EmailNotificationService;
 import com.tms.notification.EmailTemplates;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +21,7 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final CompanyRepository companyRepository;
     private final EmailNotificationService notificationService;
-    private final DriverProfileService driverProfileService;
+    private final DriverService driverService;
     private final UUID companyId = UUID.fromString("aed2f7aa-5eca-4df1-8881-87a5754350c2");
 
     public List<EmployeeDto> findAllEmployees() {
@@ -60,16 +59,18 @@ public class EmployeeService {
         var exists = employeeRepository.existsByEmailAndCompanyId(employeeRequest.email().toLowerCase(),companyId);
         if (exists) throw new EmployeeAlreadyExistsException();
         var newEmployee = EmployeeMapper.toEntity(employeeRequest, company);
+
         // if role is DRIVER, we save driverProfile
         var role = employeeRequest.role();
         if(role.equals(EmployeeAllowedRoles.ROLE_DRIVER)) {
-            driverProfileService.registerDriverProfile(newEmployee,employeeRequest.driverProfile());
+            driverService.registerDriverProfile(newEmployee,employeeRequest.driverProfile());
         }
         // Save
         var password = CodeGeneratorUtil.generatePassword();
         newEmployee.setPassword(password);
         newEmployee.setEmail(employeeRequest.email().toLowerCase());
         var savedUser = employeeRepository.save(newEmployee);
+
         // Send email with login credentials
         var name = newEmployee.getUsername();
         var email =  newEmployee.getEmail();
@@ -89,11 +90,11 @@ public class EmployeeService {
     }
 
     @Transactional
-    public EmployeeDto updateEmployee(UUID id, EmployeeUpdateRequest userRequest) {
+    public EmployeeDto updateEmployee(UUID id, EmployeeUpdateRequest employeeRequest) {
         // Verify if employee exists only on not deleted ones
-        var user = employeeRepository.findActiveUserById(id, companyId)
+        var employee = employeeRepository.findActiveUserById(id, companyId)
                 .orElseThrow(EmployeeNotFoundException::new);
-        String normalizedEmail = userRequest.email().toLowerCase();
+        String normalizedEmail = employeeRequest.email().toLowerCase();
         // Verify if someone else has the same email only on not deleted
         employeeRepository.findActiveByEmail(normalizedEmail, companyId)
                 .ifPresent(existing -> {
@@ -102,11 +103,16 @@ public class EmployeeService {
                     }
                 });
         // update
-        user.setUsername(userRequest.username());
-        user.setEmail(normalizedEmail);
-        user.setPassword(userRequest.password())
-        ;user.setPhone(userRequest.phone());
-        return EmployeeMapper.toDto(employeeRepository.save(user));
+        employee.setUsername(employeeRequest.username());
+        employee.setEmail(normalizedEmail);
+        employee.setPassword(employeeRequest.password());
+        employee.setPhone(employeeRequest.phone());
+
+        //update driver profile
+        if(employee.getRole().equals(EmployeeRole.ROLE_DRIVER)) {
+            driverService.updateDriverProfile(employee, employeeRequest.driverProfile());
+        }
+        return EmployeeMapper.toDto(employeeRepository.save(employee));
     }
 
     public void resendCredentialsEmail(UUID id) {
