@@ -1,12 +1,10 @@
-package com.tms.security;
+package com.tms.auth;
 
-import com.tms.employees.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -29,10 +27,11 @@ public class SecurityConfig {
                 .sessionManagement(c ->
                     c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(r -> r
+                .authorizeHttpRequests(c -> c
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/employees/**").permitAll()
-                        .anyRequest().authenticated());
+                        .requestMatchers("/clients/**").permitAll()
+                        .anyRequest().authenticated())
+                .formLogin(Customizer.withDefaults());
         return http.build();
     }
 

@@ -7,10 +7,16 @@ import com.tms.employees.driver.*;
 import com.tms.notification.EmailNotificationService;
 import com.tms.notification.EmailTemplates;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,6 +28,7 @@ public class EmployeeService {
     private final CompanyRepository companyRepository;
     private final EmailNotificationService notificationService;
     private final DriverService driverService;
+    private final PasswordEncoder passwordEncoder;
     private final UUID companyId = UUID.fromString("aed2f7aa-5eca-4df1-8881-87a5754350c2");
 
     public List<EmployeeDto> findAllEmployees() {
@@ -67,14 +74,16 @@ public class EmployeeService {
         }
         // Save
         var password = CodeGeneratorUtil.generatePassword();
-        newEmployee.setPassword(password);
+        System.out.println(password);
+        newEmployee.setPassword(passwordEncoder.encode(password));
         newEmployee.setEmail(employeeRequest.email().toLowerCase());
         var savedUser = employeeRepository.save(newEmployee);
 
         // Send email with login credentials
-        var name = newEmployee.getUsername();
-        var email =  newEmployee.getEmail();
-        //sendLoginCredentials(email, name, password);
+        sendLoginCredentials(
+                newEmployee.getEmail(),
+                newEmployee.getUsername(),
+                password);
         return EmployeeMapper.toDto(savedUser);
     }
 
@@ -105,7 +114,7 @@ public class EmployeeService {
         // update
         employee.setUsername(employeeRequest.username());
         employee.setEmail(normalizedEmail);
-        employee.setPassword(employeeRequest.password());
+        employee.setPassword(passwordEncoder.encode(employeeRequest.password()));
         employee.setPhone(employeeRequest.phone());
 
         //update driver profile
@@ -117,10 +126,9 @@ public class EmployeeService {
 
     public void resendCredentialsEmail(UUID id) {
         var employee = employeeRepository.findActiveUserById(id, companyId).orElseThrow(EmployeeNotFoundException::new);
-        var name = employee.getUsername();
-        var email = employee.getEmail();
-        var password = employee.getPassword();
-        sendLoginCredentials(email, name, password);
+        sendLoginCredentials(employee.getEmail(),
+                employee.getUsername(),
+                employee.getPassword());
     }
 
     private void sendLoginCredentials(String to, String name, String password) {

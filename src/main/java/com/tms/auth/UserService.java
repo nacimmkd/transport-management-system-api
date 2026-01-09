@@ -1,4 +1,4 @@
-package com.tms.security;
+package com.tms.auth;
 
 import com.tms.employees.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
