@@ -1,5 +1,8 @@
 package com.tms.auth;
 
+import com.tms.company.CompanyRegistrationRequest;
+import com.tms.company.CompanyRegistrationResponse;
+import com.tms.company.CompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

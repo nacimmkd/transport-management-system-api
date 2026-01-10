@@ -1,22 +1,39 @@
 package com.tms.company;
 
-import com.tms.common.ErrorDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/companies")
 @RequiredArgsConstructor
 public class CompanyController {
 
-    private final CompanyRepository companyRepository;
+    private final CompanyService companyService;
 
-    @ExceptionHandler(CompanyNotFoundException.class)
-    public ResponseEntity<ErrorDto> companyNotFoundException(Exception e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDto(e.getMessage()));
+
+    @GetMapping
+    public ResponseEntity<CompanyDto> getCompany() {
+        var company = companyService.getCompany();
+        return ResponseEntity.ok().body(company);
     }
+
+
+    @PostMapping("/register")
+    public ResponseEntity<CompanyRegistrationResponse> register(
+            @RequestBody CompanyRegistrationRequest registrationRequest,
+            UriComponentsBuilder uriBuilder
+    ) {
+        var response = companyService.RegisterAdminWithCompany(registrationRequest);
+        var uri = uriBuilder.path("/companies").build().toUri();
+        return ResponseEntity.created(uri).body(response);
+    }
+
+    @DeleteMapping("/{companyId}")
+    public ResponseEntity<Void> delete(@PathVariable Long companyId) {
+        companyService.deleteCompany();
+        return ResponseEntity.noContent().build();
+    }
+
 }
