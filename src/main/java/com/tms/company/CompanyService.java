@@ -23,7 +23,7 @@ public class CompanyService {
 
 
     public CompanyDto getCompany() {
-        var company = companyRepository.findByIdAndDeletedFalse(companyId)
+        var company = companyRepository.findByIdAndIsDeletedFalse(companyId)
                 .orElseThrow(CompanyNotFoundException::new);
         return CompanyMapper.toDto(company);
     }
