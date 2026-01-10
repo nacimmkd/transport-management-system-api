@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping("/companies")
+@RequestMapping("/company")
 @RequiredArgsConstructor
 public class CompanyController {
 
@@ -30,8 +30,8 @@ public class CompanyController {
         return ResponseEntity.created(uri).body(response);
     }
 
-    @DeleteMapping("/{companyId}")
-    public ResponseEntity<Void> delete(@PathVariable Long companyId) {
+    @DeleteMapping
+    public ResponseEntity<Void> deleteCompany() {
         companyService.deleteCompany();
         return ResponseEntity.noContent().build();
     }
