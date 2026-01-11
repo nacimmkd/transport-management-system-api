@@ -1,5 +1,6 @@
 package com.tms.auth;
 
+import com.tms.employees.EmployeeRepository;
 import com.tms.employees.EmployeeService;
 import io.jsonwebtoken.Jwt;
 import lombok.RequiredArgsConstructor;

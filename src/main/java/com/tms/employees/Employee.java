@@ -42,7 +42,7 @@ public class Employee {
     @JsonManagedReference
     private DriverProfile driverProfile;
 
-    @ManyToOne @JoinColumn(name = "company_id")
+    @ManyToOne(fetch = FetchType.EAGER) @JoinColumn(name = "company_id")
     private Company company;
 
     public void addDriverProfile(DriverProfile profile) {

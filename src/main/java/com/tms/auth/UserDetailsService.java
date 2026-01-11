@@ -15,7 +15,7 @@ import java.util.UUID;
 public class UserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
 
     private final EmployeeRepository employeeRepository;
-    private final UUID companyId = UUID.fromString("aed2f7aa-5eca-4df1-8881-87a5754350c2");
+    private final UUID companyId = UUID.fromString("98798865-0dc2-4cc0-8661-f357b21d5d6b");
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
