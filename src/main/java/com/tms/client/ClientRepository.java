@@ -13,12 +13,12 @@ import java.util.UUID;
 @Repository
 public interface ClientRepository extends JpaRepository<Client, UUID>, JpaSpecificationExecutor<Client> {
 
-    @Query("SELECT c FROM Client c WHERE c.id=:id AND c.isDeleted=false AND c.company.id=:companyId")
+    @Query("SELECT c FROM Client c WHERE c.id=:id AND c.company.id=:companyId")
     Optional<Client> findActiveClientById(@Param("id") UUID uuid, @Param("companyId") UUID companyId);
 
-    @Query("SELECT c FROM Client c WHERE c.isDeleted=false AND c.company.id = :companyId")
+    @Query("SELECT c FROM Client c WHERE c.company.id = :companyId")
     List<Client> findAllActiveClients(@Param("companyId") UUID companyId);
 
-    @Query("SELECT c FROM Client c WHERE c.email = :email AND c.company.id=:companyId AND c.isDeleted=false")
+    @Query("SELECT c FROM Client c WHERE c.email = :email AND c.company.id=:companyId")
     Optional<Client> findActiveByEmail(@Param("email") String email, @Param("companyId") UUID companyId);
 }

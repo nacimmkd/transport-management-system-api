@@ -23,14 +23,14 @@ public class CompanyService {
 
 
     public CompanyDto getCompany() {
-        var company = companyRepository.findByIdAndIsDeletedFalse(companyId)
+        var company = companyRepository.findById(companyId)
                 .orElseThrow(CompanyNotFoundException::new);
         return CompanyMapper.toDto(company);
     }
 
     @Transactional
     public void deleteCompany(){
-        var company = companyRepository.findByIdAndIsDeletedFalse(companyId)
+        var company = companyRepository.findById(companyId)
                 .orElseThrow(CompanyNotFoundException::new);
         company.deleteCompany();
         companyRepository.save(company);
@@ -38,7 +38,7 @@ public class CompanyService {
 
     @Transactional
     public CompanyRegistrationResponse RegisterAdminWithCompany(CompanyRegistrationRequest registrationRequest) {
-        var exists = companyRepository.existsByEmailAndIsDeletedFalse(registrationRequest.company().email());
+        var exists = companyRepository.existsByEmail(registrationRequest.company().email());
         if (exists) throw new CompanyAlreadyExistsException();
 
         var company = registerCompany(registrationRequest.company());

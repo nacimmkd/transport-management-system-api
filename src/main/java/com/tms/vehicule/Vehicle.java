@@ -4,6 +4,7 @@ import com.tms.company.Company;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
@@ -18,6 +19,7 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "vehicles")
+@SQLRestriction("deleted = false")
 public class Vehicle {
     @Id @GeneratedValue(strategy = GenerationType.UUID) private UUID id;
     private String model;

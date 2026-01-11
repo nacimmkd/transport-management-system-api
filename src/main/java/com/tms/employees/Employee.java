@@ -7,6 +7,7 @@ import com.tms.employees.driver.DriverProfile;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "employees")
+@SQLRestriction("deleted = false")
 public class Employee {
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

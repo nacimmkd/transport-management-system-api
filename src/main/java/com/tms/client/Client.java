@@ -3,6 +3,7 @@ package com.tms.client;
 import com.tms.company.Company;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -14,6 +15,7 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "clients")
+@SQLRestriction("deleted = false")
 public class Client {
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

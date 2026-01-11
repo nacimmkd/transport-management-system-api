@@ -7,6 +7,7 @@ import com.tms.vehicule.Vehicle;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "companies")
+@SQLRestriction("deleted = false")
 public class Company {
 
     @Id @GeneratedValue(strategy = GenerationType.UUID)

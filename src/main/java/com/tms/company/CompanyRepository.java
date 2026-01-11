@@ -11,6 +11,5 @@ import java.util.UUID;
 
 public interface CompanyRepository extends JpaRepository<Company, UUID> {
 
-    Optional<Company> findByIdAndIsDeletedFalse(UUID id);
-    boolean existsByEmailAndIsDeletedFalse(String email);
+    boolean existsByEmail(String email);
 }
