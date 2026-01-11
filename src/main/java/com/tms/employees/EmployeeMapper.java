@@ -1,6 +1,7 @@
 package com.tms.employees;
 
 import com.tms.company.Company;
+import com.tms.company.CompanyMapper;
 import com.tms.employees.driver.DriverProfileMapper;
 
 public class EmployeeMapper {
@@ -15,6 +16,7 @@ public class EmployeeMapper {
                 .driverProfile(employee.getDriverProfile() != null
                         ? DriverProfileMapper.toDto(employee.getDriverProfile())
                         : null)
+                .company(CompanyMapper.toDto(employee.getCompany()))
                 .build();
     }
 

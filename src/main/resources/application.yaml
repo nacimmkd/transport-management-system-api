@@ -24,3 +24,6 @@ spring:
           starttls:
             enable: true
             required: true
+
+  jwt:
+    secret: ${TOKEN_SECRET_KEY}

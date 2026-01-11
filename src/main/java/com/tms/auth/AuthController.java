@@ -1,8 +1,7 @@
 package com.tms.auth;
 
-import com.tms.company.CompanyRegistrationRequest;
-import com.tms.company.CompanyRegistrationResponse;
-import com.tms.company.CompanyService;
+import com.tms.employees.EmployeeService;
+import io.jsonwebtoken.Jwt;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,17 +14,21 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-public class authController {
+public class AuthController {
 
     private final AuthenticationManager authenticationManager;
+    private final EmployeeService employeeService;
+    private final JwtService jwtService;
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<JwtResponse> login(@RequestBody LoginRequest loginRequest) {
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 loginRequest.email(), loginRequest.password()
         );
         authenticationManager.authenticate(authentication);
-        return ResponseEntity.ok().build();
+        var user = employeeService.findEmployeeByEmail(loginRequest.email());
+        var token = jwtService.generateToken(user.id(), user.company().id(), user.role());
+        return ResponseEntity.ok(new JwtResponse(token));
     }
 
     @ExceptionHandler(BadCredentialsException.class)

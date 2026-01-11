@@ -39,6 +39,12 @@ public class EmployeeService {
         return EmployeeMapper.toDto(user);
     }
 
+    public EmployeeDto findEmployeeByEmail(String email) {
+        var employee = employeeRepository.findActiveByEmail(email,companyId)
+                .orElseThrow(EmployeeNotFoundException::new);
+        return EmployeeMapper.toDto(employee);
+    }
+
     public List<EmployeeDto> searchEmployees(EmployeeSearchCriteria criteria) {
         var spec = EmployeeSpecifications.withCriteria(criteria, companyId);
         return employeeRepository.findAll(spec).stream()

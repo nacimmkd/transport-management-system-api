@@ -1,5 +1,6 @@
 package com.tms.employees;
 
+import com.tms.company.CompanyDto;
 import com.tms.employees.driver.DriverProfileDto;
 import lombok.Builder;
 
@@ -12,6 +13,7 @@ public record EmployeeDto(
         String email,
         String phone,
         EmployeeRole role,
-        DriverProfileDto driverProfile
+        DriverProfileDto driverProfile,
+        CompanyDto company
 ) {
 }
